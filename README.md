@@ -1,2 +1,2 @@
-# theocampusweb
-Application web pour répertorier des outils Théocampus
+# Théocampus Web
+Application web pour répertorier des outils Théocampus utiles
