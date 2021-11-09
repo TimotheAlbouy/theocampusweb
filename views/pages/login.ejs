@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<%- include("views/partials/header", {title: "Connexion"}); %>
+	</head>
+	<body>
+		<form action="/messe" method="POST">
+      <input name="username" />
+      <input name="password" type="password" />
+			<button type="submit">Se connecter</button>
+		</form>
+	</body>
+</html>

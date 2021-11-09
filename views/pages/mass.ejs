@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<%- include("views/partials/header", {title: "Générateur de PDF de messe"}); %>
+	</head>
+	<body>
+		<form action="/messe">
+			<input name="entrySongName" />
+			<input name="universalPrayerSongName" />
+			<input name="offertorySongName" />
+			<input name="communionSongName" />
+			<input name="sendingSongName" />
+			<button type="submit">Générer</button>
+		</form>
+	</body>
+</html>
