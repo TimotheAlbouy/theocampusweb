@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<%- include("../../partials/head", { title: title }); %>
+	</head>
+	<body>
+		<%- include("../../partials/header"); %>
+    <div class="container">
+			<h1><%= title %></h1>
+
+      <div class="clearfix">
+        <a class="btn btn-secondary float-right" href="/mass/universal-prayers">Retour à la liste</a>
+      </div>
+      <br />
+
+      <% if (flashType && flashMessage) { %>
+      <div role="alert" class="alert alert-<%
+        if (flashType === 'error') {
+          %>danger<%
+        } else if (flashType === 'success') {
+          %>success<%
+        } %>">
+        <%= flashMessage %>
+      </div>
+      <% } %>
+
+      <form method="POST">
+        <input type="hidden" name="_method" value="PUT">
+
+        <div class="form-group">
+          <label for="chorus">Refrain</label>
+          <input id="chorus" name="chorus" class="form-control"
+            value="<%= universalPrayer.chorus %>" disabled
+          />
+        </div>
+        
+        <button class="btn btn-primary" id="editBtn" type="button" onclick="enableEdit()">
+          Éditer
+        </button>
+
+        <button class="btn btn-success" id="saveBtn" type="submit" style="display: none;">
+          Enregistrer
+        </button>
+
+        <button class="btn btn-danger" id="deleteBtn" type="button"
+          onclick="$('#deleteForm').submit()" style="display: none;"
+        >
+          Supprimer
+        </button>
+      </form>
+      
+      <form id="deleteForm" method="POST">
+        <input type="hidden" name="_method" value="DELETE">
+      </form>
+    </div>
+    <script>
+      function enableEdit() {
+        $("#chorus").prop("disabled", false);
+        $("#editBtn, #saveBtn, #deleteBtn").toggle();
+      }
+    </script>
+	</body>
+</html>

@@ -1,2 +1,50 @@
-<title><%= title %></title>
-<meta charset="utf-8" />
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <a class="navbar-brand" href="#">Theocampus Web</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarText">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item">
+        <a class="nav-link" href="/">Accueil</a>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="massDropdown"
+          role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+        >
+          Messes
+        </a>
+        <div class="dropdown-menu" aria-labelledby="massDropdown">
+          <a class="dropdown-item" href="/mass/slides">
+            Diaporama enregistré
+          </a>
+          <a class="dropdown-item <%= !username && 'disabled' %>" href="/mass">
+            Générateur de diaporama
+          </a>
+          <a class="dropdown-item <%= !username && 'disabled' %>" href="/mass/songs">
+            Liste des chants
+          </a>
+          <a class="dropdown-item <%= !username && 'disabled' %>" href="/mass/universal-prayers">
+            Liste des prières universelles
+          </a>
+        </div>
+      </li>
+    </ul>
+    <ul class="navbar-nav">
+      <% if (username) { %>
+      <li class="nav-item navbar-text pr-3">
+        Bienvenue <span class="font-weight-bold"><%= username %></span>
+      </li>
+      <li>
+        <a href="/logout" class="btn btn-danger">
+          Déconnexion
+        </a>
+      </li>
+      <% } else { %>
+      <li>
+        <a class="btn btn-primary" href="/login">Connexion</a>
+      </li>
+      <% } %>
+    </ul>
+  </div>
+</nav>

@@ -2,7 +2,9 @@
 node_modules
 /dist
 
-secret.js
+theocampusweb.db
+routes/slides.pdf
+env.js
 
 # local env files
 .env.local

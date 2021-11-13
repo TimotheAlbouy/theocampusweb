@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<%- include("../../partials/head", { title: title }); %>
+	</head>
+	<body>
+		<%- include("../../partials/header"); %>
+    <div class="container">
+			<h1><%= title %></h1>
+
+      <div class="clearfix">
+        <a class="btn btn-secondary float-right" href="/mass/universal_prayers">Retour à la liste</a>
+      </div>
+      <br />
+
+      <% if (flashType === "error" && flashMessage) { %>
+      <div role="alert" class="alert alert-danger"><%= flashMessage %></div>
+      <% } %>
+
+		  <form method="POST">
+        <div class="form-group">
+          <label for="chorus">Refrain</label>
+          <input id="chorus" name="chorus" class="form-control" />
+        </div>
+
+        <button class="btn btn-success" type="submit">
+          Enregistrer
+        </button>
+      </form>
+    </div>
+	</body>
+</html>
