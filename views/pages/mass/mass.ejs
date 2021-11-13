@@ -75,8 +75,9 @@
 					offertorySongTitle: $("#offertorySongTitle").val(),
 					communionSongTitle: $("#communionSongTitle").val(),
 					recessionalSongTitle: $("#recessionalSongTitle").val()
+				}, () => {
+					$("#slidesFrame")[0].contentWindow.location.reload();
 				});
-				$("#slidesFrame")[0].contentWindow.location.reload();
 			}
 		</script>
 	</body>

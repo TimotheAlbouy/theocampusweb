@@ -60,8 +60,8 @@ app.post("/login", postLogin);
 app.get("/logout", getLogout);
 
 app.get("/mass/slides", getSlides);
-app.get("/mass", getMass); // reenable auth
-app.post("/mass", postMass); // reenable auth
+app.get("/mass", auth, getMass);
+app.post("/mass", auth, postMass);
 
 app.get("/mass/songs", auth, getSongs);
 app.get("/mass/songs/:id(\\d+)", auth, getSong);
