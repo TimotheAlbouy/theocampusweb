@@ -42,6 +42,7 @@ app.use((req, res, next) => {
 	if (flashTypeArray) res.locals.flashMessage = flashMessageArray[0];
 	next();
 });
+app.use(express.static("public"));
 
 const db = new Database(DATABASE_NAME);
 //const db = new Database(DATABASE_NAME, { verbose: console.log });
