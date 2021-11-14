@@ -23,11 +23,11 @@ exports.deleteSong = (req, res) => {
 	const db = req.app.get("db");
 	const { id } = req.params;
 	
-	db.prepare("DELETE FROM Song WHERE id = ?").run(id);
 	db.prepare("DELETE FROM EntranceSong WHERE id = ?").run(id);
 	db.prepare("DELETE FROM OffertorySong WHERE id = ?").run(id);
 	db.prepare("DELETE FROM CommunionSong WHERE id = ?").run(id);
 	db.prepare("DELETE FROM RecessionalSong WHERE id = ?").run(id);
+	db.prepare("DELETE FROM Song WHERE id = ?").run(id);
 	
 	req.flash("flashType", "success");
 	req.flash("flashMessage", "Chant supprimé.");
