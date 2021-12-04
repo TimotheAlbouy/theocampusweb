@@ -22,14 +22,30 @@
           <tr>
             <th scope="col">#</th>
             <th scope="col">Titre</th>
+            <th scope="col">C. d'entrée</th>
+            <th scope="col">C. de communion</th>
+            <th scope="col">C. d'offertoire</th>
+            <th scope="col">C. d'envoi</th>
             <th scope="col"></th>
           </tr>
         </thead>
         <tbody>
-          <% for (const { id, title } of songs) { %>
+          <% for (const { id, title, isEntranceSong, isOffertorySong, isCommunionSong, isRecessionalSong } of songs) { %>
           <tr>
             <th scope="row"><%= id %></th>
             <td><%= title %></td>
+            <td class="text-center <% if (isEntranceSong) { %>bg-success<% } else { %>bg-danger<% } %>">
+              <% if (isEntranceSong) { %>✓<% } else { %>✗<% } %>
+            </td>
+            <td class="text-center <% if (isOffertorySong) { %>bg-success<% } else { %>bg-danger<% } %>">
+              <% if (isOffertorySong) { %>✓<% } else { %>✗<% } %>
+            </td>
+            <td class="text-center <% if (isCommunionSong) { %>bg-success<% } else { %>bg-danger<% } %>">
+              <% if (isCommunionSong) { %>✓<% } else { %>✗<% } %>
+            </td>
+            <td class="text-center <% if (isRecessionalSong) { %>bg-success<% } else { %>bg-danger<% } %>">
+              <% if (isRecessionalSong) { %>✓<% } else { %>✗<% } %>
+            </td>
             <td>
               <a href="/mass/songs/<%= id %>" class="detailLink float-right">
                 Examiner

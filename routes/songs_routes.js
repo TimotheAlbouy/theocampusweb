@@ -1,6 +1,13 @@
 exports.getSongs = (req, res) => {
 	const db = req.app.get("db");
-	const songs = db.prepare("SELECT id, title, lyrics FROM Song").all();
+	const songs = db.prepare(
+		"SELECT id, title, " +
+		"EXISTS (SELECT 1 FROM EntranceSong WHERE Song.id = EntranceSong.id) AS isEntranceSong, " +
+		"EXISTS (SELECT 1 FROM OffertorySong WHERE Song.id = OffertorySong.id) AS isOffertorySong, " +
+		"EXISTS (SELECT 1 FROM CommunionSong WHERE Song.id = CommunionSong.id) AS isCommunionSong, " +
+		"EXISTS (SELECT 1 FROM RecessionalSong WHERE Song.id = RecessionalSong.id) AS isRecessionalSong " +
+		"FROM Song ORDER BY id"
+	).all();
 	res.render("pages/songs/songs.ejs", { title: "Liste des chants", songs: songs });
 };
 
