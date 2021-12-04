@@ -46,8 +46,8 @@ app.use((req, res, next) => {
 });
 app.use(express.static(path.join(__dirname, "public")));
 
-const db = new Database(DATABASE_NAME);
-//const db = new Database(DATABASE_NAME, { verbose: console.log });
+const db = new Database(path.join(__dirname, DATABASE_NAME));
+//const db = new Database(path.join(__dirname, DATABASE_NAME), { verbose: console.log });
 
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
