@@ -1,3 +1,5 @@
+const path = require("path");
+
 const express = require("express");
 const session = require("express-session");
 const methodOverride = require("method-override");
@@ -42,12 +44,13 @@ app.use((req, res, next) => {
 	if (flashTypeArray) res.locals.flashMessage = flashMessageArray[0];
 	next();
 });
-app.use(express.static("public"));
+app.use(express.static(path.join(__dirname, "public")));
 
 const db = new Database(DATABASE_NAME);
 //const db = new Database(DATABASE_NAME, { verbose: console.log });
 
 app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
 app.set("db", db);
 
 const auth = (req, res, next) => {
