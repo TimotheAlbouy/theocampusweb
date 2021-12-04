@@ -1,6 +1,6 @@
 exports.getUniversalPrayers = (req, res) => {
 	const db = req.app.get("db");
-	const universalPrayers = db.prepare("SELECT id, chorus FROM UniversalPrayer").all();
+	const universalPrayers = db.prepare("SELECT id, chorus FROM UniversalPrayer ORDER BY id").all();
 	res.render("pages/universal_prayers/universal_prayers.ejs", {
 		title: "Liste des prières universelles",
 		universalPrayers: universalPrayers

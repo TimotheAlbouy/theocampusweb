@@ -19,7 +19,7 @@
 			<div role="alert" class="alert alert-success"><%= flashMessage %></div>
 			<% } %>
 
-			<table class="table table-hover">
+			<table class="table table-hover" id="universalPrayersTable">
 				<thead>
 					<tr>
 						<th scope="col">#</th>
@@ -42,6 +42,11 @@
 				</tbody>
 			</table>
 		</div>
+		<script>
+      $(() => {
+        $("#universalPrayersTable").DataTable();
+      });
+    </script>
 		<style>
 			.detailLink {
 				visibility: hidden;
