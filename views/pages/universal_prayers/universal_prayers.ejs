@@ -44,7 +44,10 @@
 		</div>
 		<script>
       $(() => {
-        $("#universalPrayersTable").DataTable();
+        $("#universalPrayersTable").DataTable({
+          order: [[ 1, "asc" ]],
+          pageLength: 100
+        });
       });
     </script>
 		<style>
