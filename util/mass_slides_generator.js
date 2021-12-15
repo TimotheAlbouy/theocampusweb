@@ -43,31 +43,40 @@ module.exports = class MassSlidesGenerator {
 			const splitP1 = this._doc.splitTextToSize(lyrics[0], width - 40);
 			this.addParagraph(splitP1, 20, height/3);
 		} else if (lyrics.length == 2) {
-			const yP1 = 40;
 			const splitP1 = this._doc.splitTextToSize(lyrics[0], width - 40);
-			this.addParagraph(splitP1, 20, yP1);
-			const yP2 = yP1 + splitP1.length * lineHeight + 20;
 			const splitP2 = this._doc.splitTextToSize(lyrics[1], width - 40);
-			this.addParagraph(splitP2, 20, yP2);
+			const xP1P2 = 20;
+			const yP1 = 40;
+			const yP2 = yP1 + splitP1.length * lineHeight + 20;
+			this.addParagraph(splitP1, xP1P2, yP1);
+			this.addParagraph(splitP2, xP1P2, yP2);
 		} else if (lyrics.length == 3) {
-			const yP1 = 40;
 			const splitP1 = this._doc.splitTextToSize(lyrics[0], width - 40);
-			this.addParagraph(splitP1, 20, yP1);
-			const yP2 = yP1 + splitP1.length * lineHeight + 20;
 			const splitP2 = this._doc.splitTextToSize(lyrics[1], width - 40);
-			this.addParagraph(splitP2, 20, yP2);
-			const yP3 = yP2 + splitP2.length * lineHeight + 20;
 			const splitP3 = this._doc.splitTextToSize(lyrics[2], width - 40);
-			this.addParagraph(splitP3, 20, yP3);
+			const xP1P2P3 = 20;
+			const yP1 = 40;
+			const yP2 = yP1 + splitP1.length * lineHeight + 20;
+			const yP3 = yP2 + splitP2.length * lineHeight + 20;
+			this.addParagraph(splitP1, xP1P2P3, yP1);
+			this.addParagraph(splitP2, xP1P2P3, yP2);
+			this.addParagraph(splitP3, xP1P2P3, yP3);
 		} else if (lyrics.length >= 4) {
 			const splitP1 = this._doc.splitTextToSize(lyrics[0], width/2 - 30);
-			this.addParagraph(splitP1, 20, 40);
 			const splitP2 = this._doc.splitTextToSize(lyrics[1], width/2 - 30);
-			this.addParagraph(splitP2, 20, height/2 + 10);
 			const splitP3 = this._doc.splitTextToSize(lyrics[2], width/2 - 30);
-			this.addParagraph(splitP3, width/2 + 10, 40);
 			const splitP4 = this._doc.splitTextToSize(lyrics[3], width/2 - 30);
-			this.addParagraph(splitP4, width/2 + 10, height/2 + 10);
+			const xP1P2 = 20;
+			const xP2P3 = width/2 + 10;
+			const yP1P3 = 40;
+			const yP2P4 = Math.max(
+				yP1P3 + splitP1 * lineHeight + 20,
+				yP1P3 + splitP3 * lineHeight + 20
+			);
+			this.addParagraph(splitP1, xP1P2, yP1P3);
+			this.addParagraph(splitP2, xP1P2, yP2P4);
+			this.addParagraph(splitP3, xP2P3, yP1P3);
+			this.addParagraph(splitP4, xP2P3, yP2P4);
 		}
 	}
 

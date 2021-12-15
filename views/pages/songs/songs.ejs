@@ -20,7 +20,6 @@
 		  <table class="table table-hover" id="songsTable">
         <thead>
           <tr>
-            <th scope="col">#</th>
             <th scope="col">Titre</th>
             <th scope="col">C. d'entrée</th>
             <th scope="col">C. d'offertoire</th>
@@ -32,7 +31,6 @@
         <tbody>
           <% for (const { id, title, isEntranceSong, isOffertorySong, isCommunionSong, isRecessionalSong } of songs) { %>
           <tr>
-            <th scope="row"><%= id %></th>
             <td><%= title %></td>
             <td class="text-center <% if (isEntranceSong) { %>bg-success<% } else { %>bg-danger<% } %>">
               <% if (isEntranceSong) { %>✓<% } else { %>✗<% } %>
@@ -59,7 +57,7 @@
     <script>
       $(() => {
         $("#songsTable").DataTable({
-          order: [[ 1, "asc" ]],
+          order: [[ 0, "asc" ]],
           pageLength: 100
         });
       });

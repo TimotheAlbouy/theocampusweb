@@ -22,7 +22,6 @@
 			<table class="table table-hover" id="universalPrayersTable">
 				<thead>
 					<tr>
-						<th scope="col">#</th>
 						<th scope="col">Refrain</th>
 						<th scope="col"></th>
 					</tr>
@@ -30,7 +29,6 @@
 				<tbody>
 					<% for (const { id, chorus } of universalPrayers) { %>
 					<tr>
-						<th scope="row"><%= id %></th>
 						<td><%= chorus %></td>
 						<td>
 							<a href="/mass/universal-prayers/<%= id %>" class="detailLink float-right">
@@ -45,7 +43,7 @@
 		<script>
       $(() => {
         $("#universalPrayersTable").DataTable({
-          order: [[ 1, "asc" ]],
+          order: [[ 0, "asc" ]],
           pageLength: 100
         });
       });
