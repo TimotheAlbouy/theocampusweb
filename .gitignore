@@ -2,7 +2,6 @@
 node_modules
 /dist
 
-theocampusweb.db
 ./slides.pdf
 env.js
 
