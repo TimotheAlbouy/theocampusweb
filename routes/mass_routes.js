@@ -34,17 +34,6 @@ exports.getMass = (req, res) => {
 exports.postMass = async (req, res) => {
 	const db = req.app.get("db");
 
-	if (
-		!req.body.entranceSongTitle || !req.body.universalPrayerChorus ||
-		!req.body.offertorySongTitle || !req.body.communionSongTitle ||
-		!req.body.recessionalSongTitle
-	) {
-		req.flash("flashType", "error");
-		req.flash("flashMessage", "Informations manquantes.");
-		res.redirect("/mass");
-		return;
-	}
-
 	const {
 		entranceSongTitle,
 		offertorySongTitle,
@@ -71,7 +60,7 @@ exports.postMass = async (req, res) => {
 		communionSong = db.prepare(sqlSong).get(communionSongTitle);
 	if (recessionalSongTitle !== NO_SONG)
 		recessionalSong = db.prepare(sqlSong).get(recessionalSongTitle);
-
+	
 	const generator = new MassSlidesGenerator();
 	const slides = await generator.generateSlides(
 		entranceSong, universalPrayerChorus, offertorySong, communionSong, recessionalSong

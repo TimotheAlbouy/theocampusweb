@@ -26,4 +26,17 @@ exports.AGNUS_FRENCH = `Agneau de Dieu qui enlèves le péché du monde, prends 
 Agneau de Dieu qui enlèves le péché du monde, prends pitié de nous.
 Agneau de Dieu qui enlèves le péché du monde, donne-nous la paix.`;
 
+exports.CONFITEOR_FRENCH = `Je confesse à Dieu tout-puissant,
+je reconnais devant vous, *frères et soeurs* , que j’ai péché
+en pensée, en parole, par action et par omission ;
+oui, j’ai vraiment péché.
+C’est pourquoi je supplie la *bienheureuse* Vierge Marie,
+les anges et tous les saints,
+et vous aussi, *frères et soeurs*,
+de prier pour moi le Seigneur notre Dieu.`;
+
+exports.ACCLAMATION_FRENCH = `Nous *annonçons* ta mort, Seigneur Jésus,
+nous *proclamons* ta résurrection,
+nous attendons ta venue, dans la gloire.`;
+
 exports.NO_SONG = "-- Aucun --";

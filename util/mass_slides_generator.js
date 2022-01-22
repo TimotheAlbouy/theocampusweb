@@ -4,43 +4,95 @@ const { jsPDF } = require("jspdf");
 const {
 	KYRIE_LATIN, KYRIE_FRENCH,
 	SANCTUS_LATIN, SANCTUS_FRENCH,
-	AGNUS_LATIN, AGNUS_FRENCH
+	AGNUS_LATIN, AGNUS_FRENCH,
+	CONFITEOR_FRENCH, ACCLAMATION_FRENCH
 } = require("./constants.js");
 
 module.exports = class MassSlidesGenerator {
 	constructor() {
+		this._introductionTitleSize = 60;
+		this._introductionSubtitleSize = 30;
 		this._songTitleSize = 30;
 		this._lyricsSize = 20;
+		this._singleLineSize = 30;
+
+		this._backgroundShade = 33;
+		this._primaryTextShade = 255;
+		this._secondaryTextShade = 171;
+
 		this._xSongTitle = 5;
 		this._ySongTitle = 15;
+
 		this._interParagraphWidth = 10;
 		this._interParagraphHeight = 20;
 		this._songBoxMarginLeft = 10;
 		this._songBoxMarginRight = 10;
 		this._songBoxTop = this._ySongTitle + this._interParagraphHeight;
+
+		this._verseNumber = 0;
 	}
 
-	addPage() {
+	addBackground() {
 		const width = this._doc.internal.pageSize.getWidth();
 		const height = this._doc.internal.pageSize.getHeight();
-		this._doc.addPage();
-		this._doc.setFillColor(33, 33, 33);
+		this._doc.setFillColor(this._backgroundShade, this._backgroundShade, this._backgroundShade);
 		this._doc.rect(0, 0, width, height, "F");
 	}
 
-	addOrdinarySong(title, latinLyrics, frenchLyrics) {
-		const width = this._doc.internal.pageSize.getWidth();
+	addPage() {
+		this._doc.addPage();
+		this.addBackground();
+	}
+
+	addTitle(title) {
 		this._doc.setFontSize(this._songTitleSize);
 		this._doc.text(title, this._xSongTitle, this._ySongTitle);
 		this._doc.setFontSize(this._lyricsSize);
+	}
+
+	addIntroduction() {
+		this.addBackground();
+		const width = this._doc.internal.pageSize.getWidth();
+		const height = this._doc.internal.pageSize.getHeight();
+
+		const title = "Messe du " + this.getNextWednesdayFrench();
+		this._doc.setTextColor(
+			this._primaryTextShade, this._primaryTextShade, this._primaryTextShade
+		);
+		this._doc.setFontSize(this._introductionTitleSize);
+		const splitTitle = this._doc.splitTextToSize(title, width - 40);
+		this._doc.text(splitTitle, width/2, height/3, { align: "center" });
+
+		const substitle = "Aumônerie de Beaulieu";
+		this._doc.setTextColor(
+			this._secondaryTextShade, this._secondaryTextShade, this._secondaryTextShade
+		);
+		this._doc.setFontSize(this._introductionSubtitleSize);
+		this._doc.text(substitle, width/2, 2*height/3, { align: "center" });
+		this._doc.setTextColor(this._primaryTextShade, this._primaryTextShade, this._primaryTextShade);
+	}
+
+	addConclusion() {
+		const width = this._doc.internal.pageSize.getWidth();
+		const height = this._doc.internal.pageSize.getHeight();
+		this._doc.setFontSize(this._singleLineSize);
+		this._doc.text("Bonne soirée, et souriez, Jésus vous aime !", width/2, height/2, { align: 'center' });
+	}
+
+	addOrdinarySong(title, latinLyrics, frenchLyrics) {
+		this.addTitle(title);
+		const width = this._doc.internal.pageSize.getWidth();
 		const fullSongBoxWidth = width - this._songBoxMarginLeft - this._songBoxMarginRight;
 		const halfSongBoxWidth = (fullSongBoxWidth - this._interParagraphWidth) / 2;
+		
 		const splitLatin = this._doc.splitTextToSize(latinLyrics, halfSongBoxWidth);
 		const splitFrench = this._doc.splitTextToSize(frenchLyrics, halfSongBoxWidth);
+		
 		const xLatin = this._songBoxMarginLeft;
 		const xFrench = xLatin + halfSongBoxWidth + this._interParagraphWidth;
 		const yLanguages = this._songBoxTop;
 		const yLyrics = this._songBoxTop + this._interParagraphHeight;
+		
 		this._doc.setFont(undefined, "italic");
 		this._doc.text("Latin", xLatin, yLanguages);
 		this._doc.text("Français", xFrench, yLanguages);
@@ -50,28 +102,25 @@ module.exports = class MassSlidesGenerator {
 	}
 
 	addNonOrdinarySong(title, lyrics) {
-		const width = this._doc.internal.pageSize.getWidth();
-		const height = this._doc.internal.pageSize.getHeight();
+		this.addTitle(title);
 		this._verseNumber = 1;
-		this._doc.setFontSize(this._songTitleSize);
-		this._doc.text(title, this._xSongTitle, this._ySongTitle);
-		this._doc.setFontSize(this._lyricsSize);
-		const lineHeight = this._doc.getTextDimensions('text').h;
+		const lineHeight = this._doc.getTextDimensions('TEXT').h;
+		const width = this._doc.internal.pageSize.getWidth();
 		const fullSongBoxWidth = width - this._songBoxMarginLeft - this._songBoxMarginRight;
 		const halfSongBoxWidth = (fullSongBoxWidth - this._interParagraphWidth) / 2;
 		if (lyrics.length == 1) {
 			const xP1 = this._songBoxMarginLeft;
 			const yP1 = this._songBoxTop;
 			const splitP1 = this._doc.splitTextToSize(lyrics[0], fullSongBoxWidth);
-			this.addParagraph(splitP1, xP1, yP1);
+			this.addSongParagraph(splitP1, xP1, yP1);
 		} else if (lyrics.length == 2) {
 			const splitP1 = this._doc.splitTextToSize(lyrics[0], fullSongBoxWidth);
 			const splitP2 = this._doc.splitTextToSize(lyrics[1], fullSongBoxWidth);
 			const xP1P2 = this._songBoxMarginLeft;
 			const yP1 = this._songBoxTop;
 			const yP2 = yP1 + splitP1.length * lineHeight + this._interParagraphHeight;
-			this.addParagraph(splitP1, xP1P2, yP1);
-			this.addParagraph(splitP2, xP1P2, yP2);
+			this.addSongParagraph(splitP1, xP1P2, yP1);
+			this.addSongParagraph(splitP2, xP1P2, yP2);
 		} else if (lyrics.length == 3) {
 			const splitP1 = this._doc.splitTextToSize(lyrics[0], fullSongBoxWidth);
 			const splitP2 = this._doc.splitTextToSize(lyrics[1], fullSongBoxWidth);
@@ -80,9 +129,9 @@ module.exports = class MassSlidesGenerator {
 			const yP1 = this._songBoxTop;
 			const yP2 = yP1 + splitP1.length * lineHeight + this._interParagraphHeight;
 			const yP3 = yP2 + splitP2.length * lineHeight + this._interParagraphHeight;
-			this.addParagraph(splitP1, xP1P2P3, yP1);
-			this.addParagraph(splitP2, xP1P2P3, yP2);
-			this.addParagraph(splitP3, xP1P2P3, yP3);
+			this.addSongParagraph(splitP1, xP1P2P3, yP1);
+			this.addSongParagraph(splitP2, xP1P2P3, yP2);
+			this.addSongParagraph(splitP3, xP1P2P3, yP3);
 		} else if (lyrics.length >= 4) {
 			const splitP1 = this._doc.splitTextToSize(lyrics[0], halfSongBoxWidth);
 			const splitP2 = this._doc.splitTextToSize(lyrics[1], halfSongBoxWidth);
@@ -95,15 +144,66 @@ module.exports = class MassSlidesGenerator {
 				yP1P3 + splitP1.length * lineHeight + this._interParagraphHeight,
 				yP1P3 + splitP3.length * lineHeight + this._interParagraphHeight
 			);
-			this.addParagraph(splitP1, xP1P2, yP1P3);
-			this.addParagraph(splitP2, xP1P2, yP2P4);
-			this.addParagraph(splitP3, xP2P3, yP1P3);
-			this.addParagraph(splitP4, xP2P3, yP2P4);
+			this.addSongParagraph(splitP1, xP1P2, yP1P3);
+			this.addSongParagraph(splitP2, xP1P2, yP2P4);
+			this.addSongParagraph(splitP3, xP2P3, yP1P3);
+			this.addSongParagraph(splitP4, xP2P3, yP2P4);
 		}
 	}
 
-	addParagraph(paragraph, x, y) {
-		this._doc.setFontSize(20);
+	addUniversalPrayerChorus(universalPrayerChorus) {
+		const width = this._doc.internal.pageSize.getWidth();
+		const height = this._doc.internal.pageSize.getHeight();
+		const fullSongBoxWidth = width - this._songBoxMarginLeft - this._songBoxMarginRight;
+		this._doc.setFontSize(this._singleLineChorusSize);
+		const splitUniversalPrayerChorus = this._doc.splitTextToSize(universalPrayerChorus, fullSongBoxWidth);
+		this._doc.text(splitUniversalPrayerChorus, width/2, height/2, { align: 'center' });
+	}
+
+	async addPsalm() {
+		const width = this._doc.internal.pageSize.getWidth();
+		const height = this._doc.internal.pageSize.getHeight();
+		const fullSongBoxWidth = width - this._songBoxMarginLeft - this._songBoxMarginRight;
+		this._doc.setFontSize(this._singleLineChorusSize);
+		const psalmChorus = await this.getPsalmChorus();
+		const splitPsalmChorus = this._doc.splitTextToSize(psalmChorus, fullSongBoxWidth);
+		this._doc.text(splitPsalmChorus, width/2, height/2, { align: 'center' });
+	}
+
+	addLiturgyChange(title, lyrics) {
+		this.addTitle(title);
+		const xInit = this._songBoxMarginLeft;
+		const yInit = this._songBoxTop;
+
+		this._doc.setFontSize(this._lyricsSize);
+		const lineHeight = this._doc.getTextDimensions('TEXT').h * 2;
+
+		lyrics.split(/\r?\n/).forEach((line, i) => {
+			let x = xInit;
+			let y = yInit + lineHeight*i;
+			line.split("*").forEach((part, j) => {
+				if (j % 2 === 0) {
+					this._doc.setFont(undefined, "normal");
+					this._doc.setTextColor(
+						this._secondaryTextShade, this._secondaryTextShade, this._secondaryTextShade
+					);
+				} else {
+					this._doc.setFont(undefined, "bold");
+					this._doc.setTextColor(
+						this._primaryTextShade, this._primaryTextShade, this._primaryTextShade
+					);
+				}
+				this._doc.text(part, x, y);
+				x += this._doc.getTextDimensions(part).w;
+			});
+		});
+		this._doc.setTextColor(
+			this._primaryTextShade, this._primaryTextShade, this._primaryTextShade
+		);
+	}
+
+	addSongParagraph(paragraph, x, y) {
+		this._doc.setFontSize(this._lyricsSize);
 		const isChorus = paragraph[0].startsWith("R.");
 		if (isChorus) {
 			this._doc.setFont(undefined, "bold");
@@ -163,27 +263,10 @@ module.exports = class MassSlidesGenerator {
 	async generateSlides(
 		entranceSong, universalPrayerChorus, offertorySong, communionSong, recessionalSong
 	) {
-		this._doc = new jsPDF({
-			orientation: "l",
-			format: "a4",
-		});
-		this._verseNumber = 0;
-		const width = this._doc.internal.pageSize.getWidth();
-		const height = this._doc.internal.pageSize.getHeight();
-		this._doc.setTextColor(255, 255, 255);
+		this._doc = new jsPDF({ orientation: "l", format: "a4" });
 		
 		// introduction
-		this._doc.setFillColor(33, 33, 33);
-		this._doc.rect(0, 0, width, height, 'F');
-		this._doc.setFontSize(60);
-		const title = "Messe du " + this.getNextWednesdayFrench();
-		const splitTitle = this._doc.splitTextToSize(title, width - 40);
-		this._doc.text(splitTitle, width/2, height/3, { align: 'center' });
-		this._doc.setFontSize(30);
-		this._doc.setTextColor(171, 171, 171);
-		this._doc.text("Aumônerie de Beaulieu", width/2, 2*height/3, { align: 'center' });
-		this._doc.setTextColor(255, 255, 255);
-		
+		this.addIntroduction();
 		
 		if (entranceSong) {
 			// entrance
@@ -193,21 +276,20 @@ module.exports = class MassSlidesGenerator {
 			this.addPage();
 		}
 
-		
+		// confiteor
+		this.addPage();
+		this.addLiturgyChange("Confiteor", CONFITEOR_FRENCH);
 
 		// kyrie
-		this.addPage();
-		this.addOrdinarySong("Kyrie", KYRIE_LATIN, KYRIE_FRENCH);
+		//this.addPage();
+		//this.addOrdinarySong("Kyrie", KYRIE_LATIN, KYRIE_FRENCH);
 
 		// empty
 		this.addPage();
 
 		// psalm
 		this.addPage();
-		this._doc.setFontSize(30);
-		const psalmChorus = await this.getPsalmChorus();
-		const splitPsalmChorus = this._doc.splitTextToSize(psalmChorus, width - 40);
-		this._doc.text(splitPsalmChorus, width/2, height/2, { align: 'center' });
+		this.addPsalm();
 
 		// empty
 		this.addPage();
@@ -215,9 +297,7 @@ module.exports = class MassSlidesGenerator {
 		// universal prayer
 		if (universalPrayerChorus) {
 			this.addPage();
-			this._doc.setFontSize(30);
-			const splitUniversalPrayerChorus = this._doc.splitTextToSize(universalPrayerChorus, width - 40);
-			this._doc.text(splitUniversalPrayerChorus, width/2, height/2, { align: 'center' });
+			this.addUniversalPrayerChorus(universalPrayerChorus);
 			// empty
 			this.addPage();
 		}
@@ -231,15 +311,19 @@ module.exports = class MassSlidesGenerator {
 		}
 
 		// sanctus
-		this.addPage();
-		this.addOrdinarySong("Sanctus", SANCTUS_LATIN, SANCTUS_FRENCH);
+		//this.addPage();
+		//this.addOrdinarySong("Sanctus", SANCTUS_LATIN, SANCTUS_FRENCH);
 
 		// empty
 		this.addPage();
 
-		// agnus
+		// acclamation
 		this.addPage();
-		this.addOrdinarySong("Agnus Dei", AGNUS_LATIN, AGNUS_FRENCH);
+		this.addLiturgyChange("Acclamation", ACCLAMATION_FRENCH);
+
+		// agnus
+		//this.addPage();
+		//this.addOrdinarySong("Agnus Dei", AGNUS_LATIN, AGNUS_FRENCH);
 
 		// empty
 		this.addPage();
@@ -260,8 +344,7 @@ module.exports = class MassSlidesGenerator {
 
 		// conclusion
 		this.addPage();
-		this._doc.setFontSize(30);
-		this._doc.text("Bonne soirée, et souriez, Jésus vous aime !", width/2, height/2, { align: 'center' });
+		this.addConclusion();
 
 		return this._doc;
 	}
