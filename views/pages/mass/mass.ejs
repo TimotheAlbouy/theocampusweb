@@ -84,7 +84,8 @@
 					communionSongTitle: $("#communionSongTitle").val(),
 					recessionalSongTitle: $("#recessionalSongTitle").val()
 				}, () => {
-					$("#slidesFrame")[0].contentWindow.location.reload();
+					const frame = $("#slidesFrame")[0];
+					frame.src = frame.src;
 				});
 			}
 		</script>
