@@ -1,6 +1,7 @@
 const path = require("path");
 
 const MassSlidesGenerator = require("../util/mass_slides_generator.js");
+const { NO_SONG } = require("../util/constants.js");
 
 exports.getSlides = (req, res) => {
 	res.sendFile("slides.pdf", { root: path.join(__dirname, "..") });
@@ -25,7 +26,8 @@ exports.getMass = (req, res) => {
 		universalPrayerChoruses: universalPrayerChoruses,
 		offertorySongTitles: offertorySongTitles,
 		communionSongTitles: communionSongTitles,
-		recessionalSongTitles: recessionalSongTitles
+		recessionalSongTitles: recessionalSongTitles,
+		noSong: NO_SONG
 	});
 };
 
@@ -45,39 +47,34 @@ exports.postMass = async (req, res) => {
 
 	const {
 		entranceSongTitle,
-		universalPrayerChorus,
 		offertorySongTitle,
 		communionSongTitle,
 		recessionalSongTitle
 	} = req.body;
+	let { universalPrayerChorus } = req.body;
 
-	let sql = "SELECT lyrics FROM Song WHERE title = ?";
+	const sqlSong = "SELECT title, lyrics FROM Song WHERE title = ?";
+	const sqlUP =  "SELECT chorus FROM UniversalPrayer WHERE chorus = ?";
+	let entranceSong = null;
+	let offertorySong = null;
+	let communionSong = null;
+	let recessionalSong = null;
 	
-	let stmt = db.prepare(sql);
-	const entranceSong = stmt.get(entranceSongTitle);
-	stmt = db.prepare(sql);
-	const offertorySong = stmt.get(offertorySongTitle);
-	stmt = db.prepare(sql);
-	const communionSong = stmt.get(communionSongTitle);
-	stmt = db.prepare(sql);
-	const recessionalSong = stmt.get(recessionalSongTitle);
-	const universalPrayer = db.prepare("SELECT chorus FROM UniversalPrayer WHERE chorus = ?")
-		.get(universalPrayerChorus);
-
-	if (!entranceSong || !universalPrayer || !offertorySong || !communionSong || !recessionalSong) {
-		req.flash("flashType", "error");
-		req.flash("flashMessage", "Au moins un des chants renseignés n'existe pas.");
-		res.redirect("/mass");
-		return;
-	}
+	if (entranceSongTitle !== NO_SONG)
+		entranceSong = db.prepare(sqlSong).get(entranceSongTitle);
+	if (universalPrayerChorus !== NO_SONG)
+		universalPrayerChorus = db.prepare(sqlUP).get(universalPrayerChorus);
+	else universalPrayerChorus = null;
+	if (offertorySongTitle !== NO_SONG)
+		offertorySong = db.prepare(sqlSong).get(offertorySongTitle);
+	if (communionSongTitle !== NO_SONG)
+		communionSong = db.prepare(sqlSong).get(communionSongTitle);
+	if (recessionalSongTitle !== NO_SONG)
+		recessionalSong = db.prepare(sqlSong).get(recessionalSongTitle);
 
 	const generator = new MassSlidesGenerator();
 	const slides = await generator.generateSlides(
-		entranceSongTitle, entranceSong.lyrics,
-		universalPrayerChorus,
-		offertorySongTitle, offertorySong.lyrics,
-		communionSongTitle, communionSong.lyrics,
-		recessionalSongTitle, recessionalSong.lyrics
+		entranceSong, universalPrayerChorus, offertorySong, communionSong, recessionalSong
 	);
 	slides.save("slides.pdf");
 

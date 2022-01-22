@@ -130,11 +130,7 @@ module.exports = class MassSlidesGenerator {
 	}
 
 	async generateSlides(
-		entranceSongTitle, entranceSongLyrics,
-		universalPrayerChorus,
-		offertorySongTitle, offertorySongLyrics,
-		communionSongTitle, communionSongLyrics,
-		recessionalSongTitle, recessionalSongLyrics
+		entranceSong, universalPrayerChorus, offertorySong, communionSong, recessionalSong
 	) {
 		this._doc = new jsPDF({
 			orientation: "l",
@@ -157,12 +153,16 @@ module.exports = class MassSlidesGenerator {
 		this._doc.text("Aumônerie de Beaulieu", width/2, 2*height/3, { align: 'center' });
 		this._doc.setTextColor(255, 255, 255);
 		
-		// entrance
-		this.addPage();
-		this.addNonOrdinarySong(entranceSongTitle, entranceSongLyrics.split(/\r?\n\r?\n/));
+		
+		if (entranceSong) {
+			// entrance
+			this.addPage();
+			this.addNonOrdinarySong(entranceSong.title, entranceSong.lyrics.split(/\r?\n\r?\n/));
+			// empty
+			this.addPage();
+		}
 
-		// empty
-		this.addPage();
+		
 
 		// kyrie
 		this.addPage();
@@ -182,20 +182,22 @@ module.exports = class MassSlidesGenerator {
 		this.addPage();
 
 		// universal prayer
-		this.addPage();
-		this._doc.setFontSize(30);
-		const splitUniversalPrayerChorus = this._doc.splitTextToSize(universalPrayerChorus, width - 40);
-		this._doc.text(splitUniversalPrayerChorus, width/2, height/2, { align: 'center' });
-
-		// empty
-		this.addPage();
+		if (universalPrayerChorus) {
+			this.addPage();
+			this._doc.setFontSize(30);
+			const splitUniversalPrayerChorus = this._doc.splitTextToSize(universalPrayerChorus, width - 40);
+			this._doc.text(splitUniversalPrayerChorus, width/2, height/2, { align: 'center' });
+			// empty
+			this.addPage();
+		}
 
 		// offertory
-		this.addPage();
-		this.addNonOrdinarySong(offertorySongTitle, offertorySongLyrics.split(/\r?\n\r?\n/));
-
-		// empty
-		this.addPage();
+		if (offertorySong) {
+			this.addPage();
+			this.addNonOrdinarySong(offertorySong.title, offertorySong.lyrics.split(/\r?\n\r?\n/));
+			// empty
+			this.addPage();
+		}
 
 		// sanctus
 		this.addPage();
@@ -212,15 +214,18 @@ module.exports = class MassSlidesGenerator {
 		this.addPage();
 
 		// communion
-		this.addPage();
-		this.addNonOrdinarySong(communionSongTitle, communionSongLyrics.split(/\r?\n\r?\n/));
+		if (communionSong) {
+			this.addPage();
+			this.addNonOrdinarySong(communionSong.title, communionSong.lyrics.split(/\r?\n\r?\n/));
+			// empty
+			this.addPage();
+		}
 
-		// empty
-		this.addPage();
-
-		// recessional
-		this.addPage();
-		this.addNonOrdinarySong(recessionalSongTitle, recessionalSongLyrics.split(/\r?\n\r?\n/));
+		if (recessionalSong) {
+			// recessional
+			this.addPage();
+			this.addNonOrdinarySong(recessionalSong.title, recessionalSong.lyrics.split(/\r?\n\r?\n/));
+		}
 
 		// conclusion
 		this.addPage();

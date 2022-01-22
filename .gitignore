@@ -3,7 +3,7 @@ node_modules
 /dist
 
 theocampusweb.db
-slides.pdf
+./slides.pdf
 env.js
 
 # local env files

@@ -56,6 +56,14 @@
 			const recessionalSongTitles = <%- JSON.stringify(recessionalSongTitles) %>;
 
 			$(() => {
+				const noSong = "<%= noSong %>";
+
+				entranceSongTitles.unshift(noSong);
+				universalPrayerChoruses.unshift(noSong);
+				offertorySongTitles.unshift(noSong);
+				communionSongTitles.unshift(noSong);
+				recessionalSongTitles.unshift(noSong);
+				
 				$("#entranceSongTitle").autocomplete({ source: entranceSongTitles, minLength: 0 });
 				$("#universalPrayerChorus").autocomplete({ source: universalPrayerChoruses, minLength: 0 });
 				$("#offertorySongTitle").autocomplete({ source: offertorySongTitles, minLength: 0 });

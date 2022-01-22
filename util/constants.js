@@ -25,3 +25,5 @@ Agnus Dei, qui tollis peccata mundi, dona nobis pacem.`;
 exports.AGNUS_FRENCH = `Agneau de Dieu qui enlèves le péché du monde, prends pitié de nous.
 Agneau de Dieu qui enlèves le péché du monde, prends pitié de nous.
 Agneau de Dieu qui enlèves le péché du monde, donne-nous la paix.`;
+
+exports.NO_SONG = "-- Aucun --";
