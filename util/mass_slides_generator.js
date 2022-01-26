@@ -104,7 +104,7 @@ module.exports = class MassSlidesGenerator {
 	addNonOrdinarySong(title, lyrics) {
 		this.addTitle(title);
 		this._verseNumber = 1;
-		const lineHeight = this._doc.getTextDimensions('TEXT').h;
+		const lineHeight = this._doc.getTextDimensions("TEXT").h;
 		const width = this._doc.internal.pageSize.getWidth();
 		const fullSongBoxWidth = width - this._songBoxMarginLeft - this._songBoxMarginRight;
 		const halfSongBoxWidth = (fullSongBoxWidth - this._interParagraphWidth) / 2;
@@ -155,19 +155,20 @@ module.exports = class MassSlidesGenerator {
 		const width = this._doc.internal.pageSize.getWidth();
 		const height = this._doc.internal.pageSize.getHeight();
 		const fullSongBoxWidth = width - this._songBoxMarginLeft - this._songBoxMarginRight;
-		this._doc.setFontSize(this._singleLineChorusSize);
+		this._doc.setFontSize(this._singleLineSize);
 		const splitUniversalPrayerChorus = this._doc.splitTextToSize(universalPrayerChorus, fullSongBoxWidth);
-		this._doc.text(splitUniversalPrayerChorus, width/2, height/2, { align: 'center' });
+		this._doc.text(splitUniversalPrayerChorus, width/2, height/2, { align: "center" });
 	}
 
 	async addPsalm() {
 		const width = this._doc.internal.pageSize.getWidth();
 		const height = this._doc.internal.pageSize.getHeight();
 		const fullSongBoxWidth = width - this._songBoxMarginLeft - this._songBoxMarginRight;
-		this._doc.setFontSize(this._singleLineChorusSize);
+		this._doc.setFontSize(this._singleLineSize);
 		const psalmChorus = await this.getPsalmChorus();
 		const splitPsalmChorus = this._doc.splitTextToSize(psalmChorus, fullSongBoxWidth);
-		this._doc.text(splitPsalmChorus, width/2, height/2, { align: 'center' });
+		console.log(psalmChorus, splitPsalmChorus, width/2, height/2)
+		this._doc.text(splitPsalmChorus, width/2, height/2, { align: "center" });
 	}
 
 	addLiturgyChange(title, lyrics) {
@@ -176,7 +177,7 @@ module.exports = class MassSlidesGenerator {
 		const yInit = this._songBoxTop;
 
 		this._doc.setFontSize(this._lyricsSize);
-		const lineHeight = this._doc.getTextDimensions('TEXT').h * 2;
+		const lineHeight = this._doc.getTextDimensions("TEXT").h * 2;
 
 		lyrics.split(/\r?\n/).forEach((line, i) => {
 			let x = xInit;
@@ -289,7 +290,7 @@ module.exports = class MassSlidesGenerator {
 
 		// psalm
 		this.addPage();
-		this.addPsalm();
+		await this.addPsalm();
 
 		// empty
 		this.addPage();
@@ -313,9 +314,6 @@ module.exports = class MassSlidesGenerator {
 		// sanctus
 		//this.addPage();
 		//this.addOrdinarySong("Sanctus", SANCTUS_LATIN, SANCTUS_FRENCH);
-
-		// empty
-		this.addPage();
 
 		// acclamation
 		this.addPage();

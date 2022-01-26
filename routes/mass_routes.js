@@ -51,15 +51,18 @@ exports.postMass = async (req, res) => {
 	
 	if (entranceSongTitle !== NO_SONG)
 		entranceSong = db.prepare(sqlSong).get(entranceSongTitle);
-	if (universalPrayerChorus !== NO_SONG)
-		universalPrayerChorus = db.prepare(sqlUP).get(universalPrayerChorus);
-	else universalPrayerChorus = null;
 	if (offertorySongTitle !== NO_SONG)
 		offertorySong = db.prepare(sqlSong).get(offertorySongTitle);
 	if (communionSongTitle !== NO_SONG)
 		communionSong = db.prepare(sqlSong).get(communionSongTitle);
 	if (recessionalSongTitle !== NO_SONG)
 		recessionalSong = db.prepare(sqlSong).get(recessionalSongTitle);
+	
+	if (universalPrayerChorus !== NO_SONG) {
+		universalPrayerChorus = db.prepare(sqlUP).get(universalPrayerChorus);
+		if (universalPrayerChorus)
+			universalPrayerChorus = universalPrayerChorus.chorus;
+	} else universalPrayerChorus = null;
 	
 	const generator = new MassSlidesGenerator();
 	const slides = await generator.generateSlides(
