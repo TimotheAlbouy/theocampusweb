@@ -27,7 +27,7 @@ Agneau de Dieu qui enlèves le péché du monde, prends pitié de nous.
 Agneau de Dieu qui enlèves le péché du monde, donne-nous la paix.`;
 
 exports.CONFITEOR_FRENCH = `Je confesse à Dieu tout-puissant,
-je reconnais devant vous, *frères et soeurs* , que j’ai péché
+je reconnais devant vous, *frères et soeurs*, que j’ai péché
 en pensée, en parole, par action et par omission ;
 oui, j’ai vraiment péché.
 C’est pourquoi je supplie la *bienheureuse* Vierge Marie,
