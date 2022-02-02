@@ -35,7 +35,11 @@ les anges et tous les saints,
 et vous aussi, *frères et soeurs*,
 de prier pour moi le Seigneur notre Dieu.`;
 
-exports.ACCLAMATION_FRENCH = `Nous *annonçons* ta mort, Seigneur Jésus,
+exports.ACCLAMATION_I_FRENCH = `Que le Seigneur reçoive de vos mains
+ce sacrifice à la louange et à la gloire de son Nom,
+pour notre bien et celui de toute l'Église.`;
+
+exports.ACCLAMATION_II_FRENCH = `Nous *annonçons* ta mort, Seigneur Jésus,
 nous *proclamons* ta résurrection,
 nous attendons ta venue, dans la gloire.`;
 

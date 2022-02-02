@@ -5,7 +5,8 @@ const {
 	KYRIE_LATIN, KYRIE_FRENCH,
 	SANCTUS_LATIN, SANCTUS_FRENCH,
 	AGNUS_LATIN, AGNUS_FRENCH,
-	CONFITEOR_FRENCH, ACCLAMATION_FRENCH
+	CONFITEOR_FRENCH,
+	ACCLAMATION_I_FRENCH, ACCLAMATION_II_FRENCH
 } = require("./constants.js");
 
 module.exports = class MassSlidesGenerator {
@@ -32,6 +33,18 @@ module.exports = class MassSlidesGenerator {
 		this._verseNumber = 0;
 	}
 
+	setPrimaryFontColor() {
+		this._doc.setTextColor(
+			this._primaryTextShade, this._primaryTextShade, this._primaryTextShade
+		);
+	}
+
+	setSecondaryFontColor() {
+		this._doc.setTextColor(
+			this._secondaryTextShade, this._secondaryTextShade, this._secondaryTextShade
+		);
+	}
+
 	addBackground() {
 		const width = this._doc.internal.pageSize.getWidth();
 		const height = this._doc.internal.pageSize.getHeight();
@@ -55,21 +68,17 @@ module.exports = class MassSlidesGenerator {
 		const width = this._doc.internal.pageSize.getWidth();
 		const height = this._doc.internal.pageSize.getHeight();
 
+		this.setPrimaryFontColor();
 		const title = "Messe du " + this.getNextWednesdayFrench();
-		this._doc.setTextColor(
-			this._primaryTextShade, this._primaryTextShade, this._primaryTextShade
-		);
 		this._doc.setFontSize(this._introductionTitleSize);
 		const splitTitle = this._doc.splitTextToSize(title, width - 40);
 		this._doc.text(splitTitle, width/2, height/3, { align: "center" });
 
+		this.setSecondaryFontColor();
 		const substitle = "Aumônerie de Beaulieu";
-		this._doc.setTextColor(
-			this._secondaryTextShade, this._secondaryTextShade, this._secondaryTextShade
-		);
 		this._doc.setFontSize(this._introductionSubtitleSize);
 		this._doc.text(substitle, width/2, 2*height/3, { align: "center" });
-		this._doc.setTextColor(this._primaryTextShade, this._primaryTextShade, this._primaryTextShade);
+		this.setPrimaryFontColor();
 	}
 
 	addConclusion() {
@@ -167,7 +176,6 @@ module.exports = class MassSlidesGenerator {
 		this._doc.setFontSize(this._singleLineSize);
 		const psalmChorus = await this.getPsalmChorus();
 		const splitPsalmChorus = this._doc.splitTextToSize(psalmChorus, fullSongBoxWidth);
-		console.log(psalmChorus, splitPsalmChorus, width/2, height/2)
 		this._doc.text(splitPsalmChorus, width/2, height/2, { align: "center" });
 	}
 
@@ -183,24 +191,13 @@ module.exports = class MassSlidesGenerator {
 			let x = xInit;
 			let y = yInit + lineHeight*i;
 			line.split("*").forEach((part, j) => {
-				if (j % 2 === 0) {
+				if (j % 2 === 0)
 					this._doc.setFont(undefined, "normal");
-					this._doc.setTextColor(
-						this._secondaryTextShade, this._secondaryTextShade, this._secondaryTextShade
-					);
-				} else {
-					this._doc.setFont(undefined, "bold");
-					this._doc.setTextColor(
-						this._primaryTextShade, this._primaryTextShade, this._primaryTextShade
-					);
-				}
+				else this._doc.setFont(undefined, "bold");
 				this._doc.text(part, x, y);
 				x += this._doc.getTextDimensions(part).w;
 			});
 		});
-		this._doc.setTextColor(
-			this._primaryTextShade, this._primaryTextShade, this._primaryTextShade
-		);
 	}
 
 	addSongParagraph(paragraph, x, y) {
@@ -282,8 +279,8 @@ module.exports = class MassSlidesGenerator {
 		this.addLiturgyChange("Confiteor", CONFITEOR_FRENCH);
 
 		// kyrie
-		//this.addPage();
-		//this.addOrdinarySong("Kyrie", KYRIE_LATIN, KYRIE_FRENCH);
+		this.addPage();
+		this.addOrdinarySong("Kyrie", KYRIE_LATIN, KYRIE_FRENCH);
 
 		// empty
 		this.addPage();
@@ -311,17 +308,21 @@ module.exports = class MassSlidesGenerator {
 			this.addPage();
 		}
 
-		// sanctus
-		//this.addPage();
-		//this.addOrdinarySong("Sanctus", SANCTUS_LATIN, SANCTUS_FRENCH);
-
-		// acclamation
+		// acclamation 1
 		this.addPage();
-		this.addLiturgyChange("Acclamation", ACCLAMATION_FRENCH);
+		this.addLiturgyChange("Acclamation", ACCLAMATION_I_FRENCH);
+
+		// sanctus
+		this.addPage();
+		this.addOrdinarySong("Sanctus", SANCTUS_LATIN, SANCTUS_FRENCH);
+
+		// acclamation 2
+		this.addPage();
+		this.addLiturgyChange("Acclamation", ACCLAMATION_II_FRENCH);
 
 		// agnus
-		//this.addPage();
-		//this.addOrdinarySong("Agnus Dei", AGNUS_LATIN, AGNUS_FRENCH);
+		this.addPage();
+		this.addOrdinarySong("Agnus Dei", AGNUS_LATIN, AGNUS_FRENCH);
 
 		// empty
 		this.addPage();
