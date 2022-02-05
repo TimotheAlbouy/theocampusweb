@@ -272,7 +272,8 @@ module.exports = class MassSlidesGenerator {
 	}
 
 	async generateSlides(
-		entranceSong, universalPrayerChorus, offertorySong, communionSong, recessionalSong
+		entranceSong, universalPrayerChorus, offertorySong, communionSong, recessionalSong,
+		addGloria=false
 	) {
 		this._doc = new jsPDF({ orientation: "l", format: "a4" });
 		
@@ -298,12 +299,13 @@ module.exports = class MassSlidesGenerator {
 		// empty
 		this.addPage();
 
-		// gloria
-		this.addPage();
-		this.addOrdinarySong("Gloria", GLORIA_FRENCH, null);
-		
-		// empty
-		this.addPage();
+		if (addGloria) {
+			// gloria
+			this.addPage();
+			this.addOrdinarySong("Gloria", GLORIA_FRENCH, null);
+			// empty
+			this.addPage();
+		}
 
 		// psalm
 		this.addPage();
@@ -332,13 +334,22 @@ module.exports = class MassSlidesGenerator {
 		this.addPage();
 		this.addLiturgyChange("Acclamation", ACCLAMATION_FRENCH);
 
+		// empty
+		this.addPage();
+
 		// sanctus
 		this.addPage();
 		this.addOrdinarySong("Sanctus", SANCTUS_FRENCH, SANCTUS_LATIN);
 
+		// empty
+		this.addPage();
+
 		// anamnesis
 		this.addPage();
 		this.addLiturgyChange("Acclamation", ANAMNESIS_FRENCH);
+
+		// empty
+		this.addPage();
 
 		// agnus
 		this.addPage();

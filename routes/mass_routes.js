@@ -48,6 +48,7 @@ exports.postMass = async (req, res) => {
 	let offertorySong = null;
 	let communionSong = null;
 	let recessionalSong = null;
+	let addGloria = false;
 	
 	if (entranceSongTitle !== NO_SONG)
 		entranceSong = db.prepare(sqlSong).get(entranceSongTitle);
@@ -63,10 +64,14 @@ exports.postMass = async (req, res) => {
 		if (universalPrayerChorus)
 			universalPrayerChorus = universalPrayerChorus.chorus;
 	} else universalPrayerChorus = null;
+
+	if (req.body.addGloria === "true")
+		addGloria = true;
 	
 	const generator = new MassSlidesGenerator();
 	const slides = await generator.generateSlides(
-		entranceSong, universalPrayerChorus, offertorySong, communionSong, recessionalSong
+		entranceSong, universalPrayerChorus, offertorySong, communionSong, recessionalSong,
+		addGloria
 	);
 	slides.save("slides.pdf");
 

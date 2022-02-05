@@ -34,6 +34,15 @@
 					<input id="recessionalSongTitle" class="form-control" />
 				</div>
 			</div>
+
+			<div class="form-check">
+				<input id="addGloria" type="checkbox"	class="form-check-input" />
+				<label for="addGloria" class="form-check-label">
+					Rajouter un Gloria
+				</label>
+			</div>
+
+			<br />
 			
 			<button type="button" class="btn btn-success" onclick="generateSlides()">
 				Générer
@@ -82,7 +91,8 @@
 					universalPrayerChorus: $("#universalPrayerChorus").val(),
 					offertorySongTitle: $("#offertorySongTitle").val(),
 					communionSongTitle: $("#communionSongTitle").val(),
-					recessionalSongTitle: $("#recessionalSongTitle").val()
+					recessionalSongTitle: $("#recessionalSongTitle").val(),
+					addGloria: $("#addGloria").prop("checked")
 				}, () => {
 					const frame = $("#slidesFrame")[0];
 					frame.src = frame.src;
