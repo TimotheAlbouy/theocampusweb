@@ -284,13 +284,17 @@ module.exports = class MassSlidesGenerator {
 			// entrance
 			this.addPage();
 			this.addNonOrdinarySong(entranceSong.title, entranceSong.lyrics.split(/\r?\n\r?\n/));
-			// empty
-			this.addPage();
 		}
+
+		// empty
+		this.addPage();
 
 		// confiteor
 		this.addPage();
 		this.addLiturgyChange("Confiteor", CONFITEOR_FRENCH);
+
+		// empty
+		this.addPage();
 
 		// kyrie
 		this.addPage();
