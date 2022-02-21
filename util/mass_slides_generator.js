@@ -2,10 +2,10 @@ const axios = require("axios");
 const { jsPDF } = require("jspdf");
 
 const {
-	KYRIE_LATIN, KYRIE_FRENCH,
+	KYRIE_FRENCH, KYRIE_GREEK,
 	GLORIA_FRENCH,
-	SANCTUS_LATIN, SANCTUS_FRENCH,
-	AGNUS_LATIN, AGNUS_FRENCH,
+	SANCTUS_FRENCH, SANCTUS_LATIN,
+	AGNUS_FRENCH, AGNUS_LATIN,
 	CONFITEOR_FRENCH,
 	ACCLAMATION_FRENCH,
 	ANAMNESIS_FRENCH
@@ -90,7 +90,7 @@ module.exports = class MassSlidesGenerator {
 		this._doc.text("Bonne soirée, et souriez, Jésus vous aime !", width/2, height/2, { align: 'center' });
 	}
 
-	addOrdinarySong(title, frenchLyrics, latinLyrics) {
+	addOrdinarySong(title, frenchLyrics, oldLyrics, isLatin) {
 		this.addTitle(title);
 		const width = this._doc.internal.pageSize.getWidth();
 		const fullSongBoxWidth = width - this._songBoxMarginLeft - this._songBoxMarginRight;
@@ -105,11 +105,12 @@ module.exports = class MassSlidesGenerator {
 		this._doc.setFont(undefined, "normal");
 		this.addTextWithStyle(splitFrench, x, y);
 
-		if (latinLyrics) {
+		if (oldLyrics) {
 			y += splitFrench.length * lineHeight + this._interParagraphHeight;
 			this._doc.setFont(undefined, "italic");
-			this._doc.text("Latin", x, y);
-			const splitLatin = this._doc.splitTextToSize(latinLyrics, fullSongBoxWidth);
+			const oldLanguage = isLatin ? "Latin" : "Grec";
+			this._doc.text(oldLanguage, x, y);
+			const splitLatin = this._doc.splitTextToSize(oldLyrics, fullSongBoxWidth);
 			y += this._interParagraphHeight;
 			this._doc.setFont(undefined, "normal");
 			this.addTextWithStyle(splitLatin, x, y);
@@ -156,9 +157,9 @@ module.exports = class MassSlidesGenerator {
 			const xP2P3 = xP1P2 + halfSongBoxWidth + this._interParagraphWidth;
 			const yP1P3 = this._songBoxTop;
 			const yP2P4 = Math.max(
-				yP1P3 + splitP1.length * lineHeight + this._interParagraphHeight,
-				yP1P3 + splitP3.length * lineHeight + this._interParagraphHeight
-			);
+				yP1P3 + splitP1.length * lineHeight,
+				yP1P3 + splitP3.length * lineHeight
+			) + this._interParagraphHeight;
 			this.addSongParagraph(splitP1, xP1P2, yP1P3);
 			this.addSongParagraph(splitP2, xP1P2, yP2P4);
 			this.addSongParagraph(splitP3, xP2P3, yP1P3);
@@ -298,7 +299,7 @@ module.exports = class MassSlidesGenerator {
 
 		// kyrie
 		this.addPage();
-		this.addOrdinarySong("Kyrie", KYRIE_FRENCH, KYRIE_LATIN);
+		this.addOrdinarySong("Kyrie", KYRIE_FRENCH, KYRIE_GREEK, false);
 
 		// empty
 		this.addPage();
@@ -306,7 +307,7 @@ module.exports = class MassSlidesGenerator {
 		if (addGloria) {
 			// gloria
 			this.addPage();
-			this.addOrdinarySong("Gloria", GLORIA_FRENCH, null);
+			this.addOrdinarySong("Gloria", GLORIA_FRENCH, null, true);
 			// empty
 			this.addPage();
 		}
@@ -343,21 +344,21 @@ module.exports = class MassSlidesGenerator {
 
 		// sanctus
 		this.addPage();
-		this.addOrdinarySong("Sanctus", SANCTUS_FRENCH, SANCTUS_LATIN);
+		this.addOrdinarySong("Sanctus", SANCTUS_FRENCH, SANCTUS_LATIN, true);
 
 		// empty
 		this.addPage();
 
 		// anamnesis
 		this.addPage();
-		this.addLiturgyChange("Acclamation", ANAMNESIS_FRENCH);
+		this.addLiturgyChange("Anamnèse", ANAMNESIS_FRENCH);
 
 		// empty
 		this.addPage();
 
 		// agnus
 		this.addPage();
-		this.addOrdinarySong("Agnus Dei", AGNUS_FRENCH, AGNUS_LATIN);
+		this.addOrdinarySong("Agnus Dei", AGNUS_FRENCH, AGNUS_LATIN, true);
 
 		// empty
 		this.addPage();
