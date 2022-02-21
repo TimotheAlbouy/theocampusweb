@@ -43,7 +43,9 @@ Agnus Dei, qui tollis peccata mundi, dona nobis pacem.`;
 exports.CONFITEOR_FRENCH = `Je confesse à Dieu tout-puissant,
 je reconnais devant vous, *frères et soeurs*, que j’ai péché
 en pensée, en parole, par action et par omission ;
-_on se frappe la poitrine en disant:_
+
+_on se frappe la poitrine en disant :_
+
 oui, j’ai vraiment péché.
 C’est pourquoi je supplie la *bienheureuse* Vierge Marie,
 les anges et tous les saints,
