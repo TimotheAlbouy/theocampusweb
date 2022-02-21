@@ -94,27 +94,46 @@ module.exports = class MassSlidesGenerator {
 		this.addTitle(title);
 		const width = this._doc.internal.pageSize.getWidth();
 		const fullSongBoxWidth = width - this._songBoxMarginLeft - this._songBoxMarginRight;
-		const lineHeight = this._doc.getTextDimensions("TEXT").h;
-		const x = this._songBoxMarginLeft;
-		let y = this._songBoxTop;
+		const xLeft = this._songBoxMarginLeft;
+		let yTop = this._songBoxTop;
 
 		this._doc.setFont(undefined, "italic");
-		this._doc.text("Français", x, y);
+		this._doc.text("Français", xLeft, yTop);
 		const splitFrench = this._doc.splitTextToSize(frenchLyrics, fullSongBoxWidth);
-		y += this._interParagraphHeight;
+		yTop += this._interParagraphHeight;
 		this._doc.setFont(undefined, "normal");
-		this.addTextWithStyle(splitFrench, x, y);
+		yTop = this.addTextWithStyle(splitFrench, xLeft, yTop);
 
 		if (oldLyrics) {
-			y += splitFrench.length * lineHeight + this._interParagraphHeight;
 			this._doc.setFont(undefined, "italic");
 			const oldLanguage = isLatin ? "Latin" : "Grec";
-			this._doc.text(oldLanguage, x, y);
-			const splitLatin = this._doc.splitTextToSize(oldLyrics, fullSongBoxWidth);
-			y += this._interParagraphHeight;
+			this._doc.text(oldLanguage, xLeft, yTop);
+			const splitOldLyrics = this._doc.splitTextToSize(oldLyrics, fullSongBoxWidth);
+			yTop += this._interParagraphHeight;
 			this._doc.setFont(undefined, "normal");
-			this.addTextWithStyle(splitLatin, x, y);
+			this.addTextWithStyle(splitOldLyrics, xLeft, yTop);
 		}
+	}
+
+	addTextWithStyle(lines, xLeft, yTop) {
+		this._doc.setFontSize(this._lyricsSize);
+		const lineHeight = this._doc.getTextDimensions("TEXT").h * 1.5;
+		lines.forEach((line, i) => {
+			let x = xLeft;
+			let y = yTop + lineHeight*i;
+			line.split("*").forEach((part, j) => {
+				part.split("_").forEach((subpart, k) => {
+					if (j % 2 === 1)
+						this._doc.setFont(undefined, "bold");
+					else if (k % 2 === 1)
+						this._doc.setFont(undefined, "italic");
+					else this._doc.setFont(undefined, "normal");
+					this._doc.text(subpart, x, y);
+					x += this._doc.getTextDimensions(subpart).w;
+				});
+			});
+		});
+		return yTop + (lines.length-1) * lineHeight + this._interParagraphHeight;
 	}
 
 	addNonOrdinarySong(title, lyrics) {
@@ -144,9 +163,9 @@ module.exports = class MassSlidesGenerator {
 			const yP1P2 = this._songBoxTop;
 			const yP3P4 = Math.max(
 				this.addSongParagraph(lyrics[0], xP1P3, yP1P2, halfSongBoxWidth),
-				this.addSongParagraph(lyrics[1], xP1P3, yP1P2, halfSongBoxWidth)
+				this.addSongParagraph(lyrics[1], xP2P4, yP1P2, halfSongBoxWidth)
 			);
-			this.addSongParagraph(lyrics[2], xP2P4, yP3P4, halfSongBoxWidth);
+			this.addSongParagraph(lyrics[2], xP1P3, yP3P4, halfSongBoxWidth);
 			this.addSongParagraph(lyrics[3], xP2P4, yP3P4, halfSongBoxWidth);
 		}
 	}
@@ -154,11 +173,11 @@ module.exports = class MassSlidesGenerator {
 	addSongParagraph(paragraph, xLeft, yTop, width) {
 		this._doc.setFontSize(this._lyricsSize);
 		const lineHeight = this._doc.getTextDimensions("TEXT").h;
-		const isChorus = paragraph[0].startsWith("R.");
+		const isChorus = paragraph.startsWith("R.");
 		
 		if (isChorus)
 			this._doc.setFont(undefined, "bold");
-		else paragraph[0] = this._verseNumber + ". " + paragraph[0];
+		else paragraph = this._verseNumber + ". " + paragraph;
 		
 		const splitParagraph = this._doc.splitTextToSize(paragraph, width);
 		this._doc.text(splitParagraph, xLeft, yTop);
@@ -195,26 +214,6 @@ module.exports = class MassSlidesGenerator {
 		const yTop = this._songBoxTop;
 		const lyricsSplit = lyrics.split(/\r?\n/);
 		this.addTextWithStyle(lyricsSplit, xLeft, yTop);
-	}
-
-	addTextWithStyle(lines, xLeft, yTop) {
-		this._doc.setFontSize(this._lyricsSize);
-		const lineHeight = this._doc.getTextDimensions("TEXT").h * 1.5;
-		lines.forEach((line, i) => {
-			let x = xLeft;
-			let y = yTop + lineHeight*i;
-			line.split("*").forEach((part, j) => {
-				part.split("_").forEach((subpart, k) => {
-					if (j % 2 === 1)
-						this._doc.setFont(undefined, "bold");
-					else if (k % 2 === 1)
-						this._doc.setFont(undefined, "italic");
-					else this._doc.setFont(undefined, "normal");
-					this._doc.text(subpart, x, y);
-					x += this._doc.getTextDimensions(subpart).w;
-				});
-			});
-		});
 	}
 
 	getNextWednesday() {
