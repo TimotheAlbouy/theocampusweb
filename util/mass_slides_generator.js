@@ -120,51 +120,54 @@ module.exports = class MassSlidesGenerator {
 	addNonOrdinarySong(title, lyrics) {
 		this.addTitle(title);
 		this._verseNumber = 1;
-		const lineHeight = this._doc.getTextDimensions("TEXT").h;
 		const width = this._doc.internal.pageSize.getWidth();
 		const fullSongBoxWidth = width - this._songBoxMarginLeft - this._songBoxMarginRight;
 		const halfSongBoxWidth = (fullSongBoxWidth - this._interParagraphWidth) / 2;
 		if (lyrics.length == 1) {
 			const xP1 = this._songBoxMarginLeft;
 			const yP1 = this._songBoxTop;
-			const splitP1 = this._doc.splitTextToSize(lyrics[0], fullSongBoxWidth);
-			this.addSongParagraph(splitP1, xP1, yP1);
+			this.addSongParagraph(lyrics[0], xP1, yP1, fullSongBoxWidth);
 		} else if (lyrics.length == 2) {
-			const splitP1 = this._doc.splitTextToSize(lyrics[0], fullSongBoxWidth);
-			const splitP2 = this._doc.splitTextToSize(lyrics[1], fullSongBoxWidth);
 			const xP1P2 = this._songBoxMarginLeft;
 			const yP1 = this._songBoxTop;
-			const yP2 = yP1 + splitP1.length * lineHeight + this._interParagraphHeight;
-			this.addSongParagraph(splitP1, xP1P2, yP1);
-			this.addSongParagraph(splitP2, xP1P2, yP2);
+			const yP2 = this.addSongParagraph(lyrics[0], xP1P2, yP1, fullSongBoxWidth);
+			this.addSongParagraph(lyrics[1], xP1P2, yP2, fullSongBoxWidth);
 		} else if (lyrics.length == 3) {
-			const splitP1 = this._doc.splitTextToSize(lyrics[0], fullSongBoxWidth);
-			const splitP2 = this._doc.splitTextToSize(lyrics[1], fullSongBoxWidth);
-			const splitP3 = this._doc.splitTextToSize(lyrics[2], fullSongBoxWidth);
 			const xP1P2P3 = this._songBoxMarginLeft;
 			const yP1 = this._songBoxTop;
-			const yP2 = yP1 + splitP1.length * lineHeight + this._interParagraphHeight;
-			const yP3 = yP2 + splitP2.length * lineHeight + this._interParagraphHeight;
-			this.addSongParagraph(splitP1, xP1P2P3, yP1);
-			this.addSongParagraph(splitP2, xP1P2P3, yP2);
-			this.addSongParagraph(splitP3, xP1P2P3, yP3);
+			const yP2 = this.addSongParagraph(lyrics[0], xP1P2P3, yP1);
+			const yP3 = this.addSongParagraph(lyrics[1], xP1P2P3, yP2, fullSongBoxWidth);
+			this.addSongParagraph(lyrics[2], xP1P2P3, yP3, fullSongBoxWidth);
 		} else if (lyrics.length >= 4) {
-			const splitP1 = this._doc.splitTextToSize(lyrics[0], halfSongBoxWidth);
-			const splitP2 = this._doc.splitTextToSize(lyrics[1], halfSongBoxWidth);
-			const splitP3 = this._doc.splitTextToSize(lyrics[2], halfSongBoxWidth);
-			const splitP4 = this._doc.splitTextToSize(lyrics[3], halfSongBoxWidth);
-			const xP1P2 = this._songBoxMarginLeft;
-			const xP2P3 = xP1P2 + halfSongBoxWidth + this._interParagraphWidth;
-			const yP1P3 = this._songBoxTop;
-			const yP2P4 = Math.max(
-				yP1P3 + splitP1.length * lineHeight,
-				yP1P3 + splitP3.length * lineHeight
-			) + this._interParagraphHeight;
-			this.addSongParagraph(splitP1, xP1P2, yP1P3);
-			this.addSongParagraph(splitP2, xP1P2, yP2P4);
-			this.addSongParagraph(splitP3, xP2P3, yP1P3);
-			this.addSongParagraph(splitP4, xP2P3, yP2P4);
+			const xP1P3 = this._songBoxMarginLeft;
+			const xP2P4 = xP1P3 + halfSongBoxWidth + this._interParagraphWidth;
+			const yP1P2 = this._songBoxTop;
+			const yP3P4 = Math.max(
+				this.addSongParagraph(lyrics[0], xP1P3, yP1P2, halfSongBoxWidth),
+				this.addSongParagraph(lyrics[1], xP1P3, yP1P2, halfSongBoxWidth)
+			);
+			this.addSongParagraph(lyrics[2], xP2P4, yP3P4, halfSongBoxWidth);
+			this.addSongParagraph(lyrics[3], xP2P4, yP3P4, halfSongBoxWidth);
 		}
+	}
+
+	addSongParagraph(paragraph, xLeft, yTop, width) {
+		this._doc.setFontSize(this._lyricsSize);
+		const lineHeight = this._doc.getTextDimensions("TEXT").h;
+		const isChorus = paragraph[0].startsWith("R.");
+		
+		if (isChorus)
+			this._doc.setFont(undefined, "bold");
+		else paragraph[0] = this._verseNumber + ". " + paragraph[0];
+		
+		const splitParagraph = this._doc.splitTextToSize(paragraph, width);
+		this._doc.text(splitParagraph, xLeft, yTop);
+		
+		if (isChorus)
+			this._doc.setFont(undefined, "normal");
+		else this._verseNumber++;
+
+		return yTop + splitParagraph.length * lineHeight + this._interParagraphHeight;
 	}
 
 	addUniversalPrayerChorus(universalPrayerChorus) {
@@ -212,20 +215,6 @@ module.exports = class MassSlidesGenerator {
 				});
 			});
 		});
-	}
-
-	addSongParagraph(paragraph, x, y) {
-		this._doc.setFontSize(this._lyricsSize);
-		const isChorus = paragraph[0].startsWith("R.");
-		if (isChorus) {
-			this._doc.setFont(undefined, "bold");
-			this._doc.text(paragraph, x, y);
-			this._doc.setFont(undefined, "normal");
-		} else {
-			paragraph[0] = this._verseNumber + ". " + paragraph[0];
-			this._doc.text(paragraph, x, y);
-			this._verseNumber++;
-		}
 	}
 
 	getNextWednesday() {
