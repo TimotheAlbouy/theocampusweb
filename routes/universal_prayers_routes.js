@@ -11,8 +11,16 @@ exports.getUniversalPrayer = (req, res) => {
 	const db = req.app.get("db");
 	const { id } = req.params;
 	const universalPrayer = db.prepare("SELECT chorus FROM UniversalPrayer WHERE id = ?").get(id);
+
+	if (!universalPrayer) {
+		req.flash("flashType", "danger");
+		req.flash("flashMessage", "Prière universelle introuvable.");
+		res.redirect("/mass/universal-prayers");
+		return;
+	}
+
 	res.render("pages/universal_prayers/universal_prayer.ejs", {
-		title: "Détail du chant",
+		title: "Détail de la prière universelle",
 		universalPrayer: universalPrayer
 	});
 };
@@ -32,7 +40,7 @@ exports.editUniversalPrayer = (req, res) => {
 	const { id } = req.params;
 
 	if (!req.body.chorus) {
-		req.flash("flashType", "error");
+		req.flash("flashType", "danger");
 		req.flash("flashMessage", "Informations manquantes.");
 		req.redirect("/mass/universal-prayers/" + id);
 		return;
@@ -43,7 +51,7 @@ exports.editUniversalPrayer = (req, res) => {
 		.get(chorus, id);
 
 	if (existingUniversalPrayer) {
-		req.flash("flashType", "error");
+		req.flash("flashType", "danger");
 		req.flash("flashMessage", "Une prière universelle avec ce titre existe déjà.");
 		req.redirect("/mass/universal-prayers/" + id);
 		return;
@@ -65,7 +73,7 @@ exports.postNewUniversalPrayer = (req, res) => {
 	const db = req.app.get("db");
 
 	if (!req.body.chorus) {
-		req.flash("flashType", "error");
+		req.flash("flashType", "danger");
 		req.flash("flashMessage", "Informations manquantes.");
 		res.redirect("/mass/universal-prayers/new");
 		return;
@@ -76,7 +84,7 @@ exports.postNewUniversalPrayer = (req, res) => {
 		.get(chorus);
 
 	if (existingUniversalPrayer) {
-		req.flash("flashType", "error");
+		req.flash("flashType", "danger");
 		req.flash("flashMessage", "Une prière universelle avec ce titre existe déjà.");
 		res.redirect("/mass/universal-prayers/new");
 		return;

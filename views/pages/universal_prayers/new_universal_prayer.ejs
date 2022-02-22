@@ -5,28 +5,28 @@
 	</head>
 	<body>
 		<%- include("../../partials/header"); %>
-    <div class="container">
+		<div class="container">
 			<h1><%= title %></h1>
 
-      <div class="clearfix">
-        <a class="btn btn-secondary float-right" href="/mass/universal-prayers">Retour à la liste</a>
-      </div>
-      <br />
+			<div class="clearfix">
+				<a class="btn btn-secondary float-right" href="/mass/universal-prayers">Retour à la liste</a>
+			</div>
+			<br />
 
-      <% if (flashType === "error" && flashMessage) { %>
-      <div role="alert" class="alert alert-danger"><%= flashMessage %></div>
-      <% } %>
+			<% if (flashType && flashMessage) { %>
+			<div role="alert" class="alert alert-<%= flashType %>"><%= flashMessage %></div>
+			<% } %>
 
-		  <form method="POST">
-        <div class="form-group">
-          <label for="chorus">Refrain</label>
-          <input id="chorus" name="chorus" class="form-control" />
-        </div>
+			<form method="POST">
+				<div class="form-group">
+					<label for="chorus">Refrain</label>
+					<textarea id="chorus" name="chorus" class="form-control" rows="10"></textarea>
+				</div>
 
-        <button class="btn btn-success" type="submit">
-          Enregistrer
-        </button>
-      </form>
-    </div>
+				<button class="btn btn-success" type="submit">
+					Enregistrer
+				</button>
+			</form>
+		</div>
 	</body>
 </html>

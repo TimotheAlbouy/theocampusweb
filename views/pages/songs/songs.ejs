@@ -5,71 +5,71 @@
 	</head>
 	<body>
 		<%- include("../../partials/header"); %>
-    <div class="container">
+		<div class="container">
 			<h1><%= title %></h1>
-      
-      <div class="clearfix">
-        <a href="/mass/songs/new" class="btn btn-primary float-right">Ajouter un chant</a>
-      </div>
-      <br />
+			
+			<div class="clearfix">
+				<a href="/mass/songs/new" class="btn btn-primary float-right">Ajouter un chant</a>
+			</div>
+			<br />
 
-      <% if (flashType === "success" && flashMessage) { %>
-      <div role="alert" class="alert alert-success"><%= flashMessage %></div>
-      <% } %>
+			<% if (flashType && flashMessage) { %>
+			<div role="alert" class="alert alert-<%= flashType %>"><%= flashMessage %></div>
+			<% } %>
 
-		  <table class="table table-hover" id="songsTable">
-        <thead>
-          <tr>
-            <th scope="col">Titre</th>
-            <th scope="col">C. d'entrée</th>
-            <th scope="col">C. d'offertoire</th>
-            <th scope="col">C. de communion</th>
-            <th scope="col">C. d'envoi</th>
-            <th scope="col"></th>
-          </tr>
-        </thead>
-        <tbody>
-          <% for (const { id, title, isEntranceSong, isOffertorySong, isCommunionSong, isRecessionalSong } of songs) { %>
-          <tr>
-            <td><%= title %></td>
-            <td class="text-center <% if (isEntranceSong) { %>bg-success<% } else { %>bg-danger<% } %>">
-              <% if (isEntranceSong) { %>✓<% } else { %>✗<% } %>
-            </td>
-            <td class="text-center <% if (isOffertorySong) { %>bg-success<% } else { %>bg-danger<% } %>">
-              <% if (isOffertorySong) { %>✓<% } else { %>✗<% } %>
-            </td>
-            <td class="text-center <% if (isCommunionSong) { %>bg-success<% } else { %>bg-danger<% } %>">
-              <% if (isCommunionSong) { %>✓<% } else { %>✗<% } %>
-            </td>
-            <td class="text-center <% if (isRecessionalSong) { %>bg-success<% } else { %>bg-danger<% } %>">
-              <% if (isRecessionalSong) { %>✓<% } else { %>✗<% } %>
-            </td>
-            <td>
-              <a href="/mass/songs/<%= id %>" class="detailLink float-right">
-                Examiner
-              </a>
-            </td>
-          </tr>
-          <% } %>
-        </tbody>
-      </table>
-    </div>
-    <script>
-      $(() => {
-        $("#songsTable").DataTable({
-          order: [[ 0, "asc" ]],
-          pageLength: 100
-        });
-      });
-    </script>
-    <style>
-      .detailLink {
-        visibility: hidden;
-      }
+			<table class="table table-hover" id="songsTable">
+				<thead>
+					<tr>
+						<th scope="col">Titre</th>
+						<th scope="col">C. d'entrée</th>
+						<th scope="col">C. d'offertoire</th>
+						<th scope="col">C. de communion</th>
+						<th scope="col">C. d'envoi</th>
+						<th scope="col"></th>
+					</tr>
+				</thead>
+				<tbody>
+					<% for (const { id, title, isEntranceSong, isOffertorySong, isCommunionSong, isRecessionalSong } of songs) { %>
+					<tr>
+						<td><%= title %></td>
+						<td class="text-center <% if (isEntranceSong) { %>bg-success<% } else { %>bg-danger<% } %>">
+							<% if (isEntranceSong) { %>✓<% } else { %>✗<% } %>
+						</td>
+						<td class="text-center <% if (isOffertorySong) { %>bg-success<% } else { %>bg-danger<% } %>">
+							<% if (isOffertorySong) { %>✓<% } else { %>✗<% } %>
+						</td>
+						<td class="text-center <% if (isCommunionSong) { %>bg-success<% } else { %>bg-danger<% } %>">
+							<% if (isCommunionSong) { %>✓<% } else { %>✗<% } %>
+						</td>
+						<td class="text-center <% if (isRecessionalSong) { %>bg-success<% } else { %>bg-danger<% } %>">
+							<% if (isRecessionalSong) { %>✓<% } else { %>✗<% } %>
+						</td>
+						<td>
+							<a href="/mass/songs/<%= id %>" class="detailLink float-right">
+								Examiner
+							</a>
+						</td>
+					</tr>
+					<% } %>
+				</tbody>
+			</table>
+		</div>
+		<script>
+			$(() => {
+				$("#songsTable").DataTable({
+					order: [[ 0, "asc" ]],
+					pageLength: 100
+				});
+			});
+		</script>
+		<style>
+			.detailLink {
+				visibility: hidden;
+			}
 
-      tr:hover .detailLink {
-        visibility: visible;
-      }
-    </style>
+			tr:hover .detailLink {
+				visibility: visible;
+			}
+		</style>
 	</body>
 </html>

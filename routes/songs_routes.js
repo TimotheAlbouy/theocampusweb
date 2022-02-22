@@ -15,6 +15,14 @@ exports.getSong = (req, res) => {
 	const db = req.app.get("db");
 	const { id } = req.params;
 	const song = db.prepare("SELECT title, lyrics FROM Song WHERE id = ?").get(id);
+
+	if (!song) {
+		req.flash("flashType", "danger");
+		req.flash("flashMessage", "Chant introuvable.");
+		res.redirect("/mass/songs");
+		return;
+	}
+
 	let stmt = db.prepare("SELECT * FROM EntranceSong WHERE id = ?");
 	song.isEntranceSong = Boolean(stmt.get(id));
 	stmt = db.prepare("SELECT * FROM OffertorySong WHERE id = ?");
@@ -46,7 +54,7 @@ exports.editSong = (req, res) => {
 	const { id } = req.params;
 
 	if (!req.body.title || !req.body.lyrics) {
-		req.flash("flashType", "error");
+		req.flash("flashType", "danger");
 		req.flash("flashMessage", "Informations manquantes.");
 		req.redirect("/mass/songs/" + id);
 		return;
@@ -56,7 +64,7 @@ exports.editSong = (req, res) => {
 	const existingSong = db.prepare("SELECT * FROM Song WHERE title = ? AND id != ?").get(title, id);
 
 	if (existingSong) {
-		req.flash("flashType", "error");
+		req.flash("flashType", "danger");
 		req.flash("flashMessage", "Un chant avec ce titre existe déjà.");
 		req.redirect("/mass/songs/" + id);
 		return;
@@ -90,7 +98,7 @@ exports.postNewSong = (req, res) => {
 	const db = req.app.get("db");
 
 	if (!req.body.title || !req.body.lyrics) {
-		req.flash("flashType", "error");
+		req.flash("flashType", "danger");
 		req.flash("flashMessage", "Informations manquantes.");
 		res.redirect("/mass/songs/new");
 		return;
@@ -100,7 +108,7 @@ exports.postNewSong = (req, res) => {
 	const existingSong = db.prepare("SELECT * FROM Song WHERE title = ?").get(title);
 
 	if (existingSong) {
-		req.flash("flashType", "error");
+		req.flash("flashType", "danger");
 		req.flash("flashMessage", "Un chant avec ce titre existe déjà.");
 		res.redirect("/mass/songs/new");
 		return;

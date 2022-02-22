@@ -8,8 +8,8 @@
 		<div class="container">
 			<h1><%= title %></h1>
 
-			<% if (flashType === "error" && flashMessage) { %>
-			<div role="alert" class="alert alert-danger"><%= flashMessage %></div>
+			<% if (flashType && flashMessage) { %>
+			<div role="alert" class="alert alert-<%= flashType %>"><%= flashMessage %></div>
 			<% } %>
 
 			<form action="/login" method="POST">

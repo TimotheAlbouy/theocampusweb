@@ -14,14 +14,7 @@
 			<br />
 
 			<% if (flashType && flashMessage) { %>
-			<div role="alert" class="alert alert-<%
-				if (flashType === 'error') {
-					%>danger<%
-				}	else if (flashType === 'success') {
-					%>success<%
-				} %>">
-				<%= flashMessage %>
-			</div>
+			<div role="alert" class="alert alert-<%= flashType %>"><%= flashMessage %></div>
 			<% } %>
 
 			<form method="POST">
@@ -35,7 +28,8 @@
 
 					<div class="form-group">
 						<label for="lyrics">Paroles</label>
-						<textarea id="lyrics" name="lyrics" class="form-control" rows="20"><%= song.lyrics %></textarea>
+						<textarea id="lyrics" name="lyrics"
+							class="form-control" rows="20"><%= song.lyrics %></textarea>
 					</div>
 
 					<div class="form-check">

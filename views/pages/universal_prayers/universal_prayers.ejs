@@ -15,8 +15,8 @@
 			</div>
 			<br />
 
-			<% if (flashType === "success" && flashMessage) { %>
-			<div role="alert" class="alert alert-success"><%= flashMessage %></div>
+			<% if (flashType && flashMessage) { %>
+			<div role="alert" class="alert alert-<%= flashType %>"><%= flashMessage %></div>
 			<% } %>
 
 			<table class="table table-hover" id="universalPrayersTable">

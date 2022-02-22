@@ -13,8 +13,8 @@
 			</div>
 			<br />
 
-			<% if (flashType === "error" && flashMessage) { %>
-			<div role="alert" class="alert alert-danger"><%= flashMessage %></div>
+			<% if (flashType && flashMessage) { %>
+			<div role="alert" class="alert alert-<%= flashType %>"><%= flashMessage %></div>
 			<% } %>
 
 			<form method="POST">

@@ -5,59 +5,53 @@
 	</head>
 	<body>
 		<%- include("../../partials/header"); %>
-    <div class="container">
+		<div class="container">
 			<h1><%= title %></h1>
 
-      <div class="clearfix">
-        <a class="btn btn-secondary float-right" href="/mass/universal-prayers">Retour à la liste</a>
-      </div>
-      <br />
+			<div class="clearfix">
+				<a class="btn btn-secondary float-right" href="/mass/universal-prayers">Retour à la liste</a>
+			</div>
+			<br />
 
-      <% if (flashType && flashMessage) { %>
-      <div role="alert" class="alert alert-<%
-        if (flashType === 'error') {
-          %>danger<%
-        } else if (flashType === 'success') {
-          %>success<%
-        } %>">
-        <%= flashMessage %>
-      </div>
-      <% } %>
+			<% if (flashType && flashMessage) { %>
+			<div role="alert" class="alert alert-<%= flashType %>"><%= flashMessage %></div>
+			<% } %>
 
-      <form method="POST">
-        <input type="hidden" name="_method" value="PUT">
+			<form method="POST">
+				<fieldset id="universalPrayerFieldSet" disabled>
+					<input type="hidden" name="_method" value="PUT">
 
-        <div class="form-group">
-          <label for="chorus">Refrain</label>
-          <input id="chorus" name="chorus" class="form-control"
-            value="<%= universalPrayer.chorus %>" disabled
-          />
-        </div>
-        
-        <button class="btn btn-primary" id="editBtn" type="button" onclick="enableEdit()">
-          Éditer
-        </button>
+					<div class="form-group">
+						<label for="chorus">Refrain</label>
+						<textarea id="chorus" name="chorus"
+							class="form-control" rows="10"><%= universalPrayer.chorus %></textarea>
+					</div>
+				</fieldset>
+				
+				<button class="btn btn-primary" id="editBtn" type="button" onclick="enableEdit()">
+					Éditer
+				</button>
 
-        <button class="btn btn-success" id="saveBtn" type="submit" style="display: none;">
-          Enregistrer
-        </button>
+				<button class="btn btn-success" id="saveBtn" type="submit" style="display: none;">
+					Enregistrer
+				</button>
 
-        <button class="btn btn-danger" id="deleteBtn" type="button"
-          onclick="$('#deleteForm').submit()" style="display: none;"
-        >
-          Supprimer
-        </button>
-      </form>
-      
-      <form id="deleteForm" method="POST">
-        <input type="hidden" name="_method" value="DELETE">
-      </form>
-    </div>
-    <script>
-      function enableEdit() {
-        $("#chorus").prop("disabled", false);
-        $("#editBtn, #saveBtn, #deleteBtn").toggle();
-      }
-    </script>
+				<button class="btn btn-danger" id="deleteBtn" type="button"
+					onclick="$('#deleteForm').submit()" style="display: none;"
+				>
+					Supprimer
+				</button>
+			</form>
+			
+			<form id="deleteForm" method="POST">
+				<input type="hidden" name="_method" value="DELETE">
+			</form>
+		</div>
+		<script>
+			function enableEdit() {
+				$("#universalPrayerFieldSet").prop("disabled", false);
+				$("#editBtn, #saveBtn, #deleteBtn").toggle();
+			}
+		</script>
 	</body>
 </html>
