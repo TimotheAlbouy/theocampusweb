@@ -1,4 +1,3 @@
-const axios = require("axios");
 const { jsPDF } = require("jspdf");
 
 const {
@@ -10,16 +9,19 @@ const {
 	ACCLAMATION_FRENCH,
 	ANAMNESIS_FRENCH
 } = require("./constants.js");
+const { getDateFrench } = require("./util.js");
 
 module.exports = class MassSlidesGenerator {
 	constructor() {
+		this._doc = null;
+
 		this._introductionTitleSize = 60;
 		this._introductionSubtitleSize = 30;
 		this._songTitleSize = 30;
 		this._lyricsSize = 20;
 		this._singleLineSize = 30;
 
-		this._backgroundShade = 33;
+		this._backgroundShade = 0;
 		this._primaryTextShade = 255;
 		this._secondaryTextShade = 171;
 
@@ -35,13 +37,13 @@ module.exports = class MassSlidesGenerator {
 		this._verseNumber = 0;
 	}
 
-	setPrimaryFontColor() {
+	setPrimaryFontShade() {
 		this._doc.setTextColor(
 			this._primaryTextShade, this._primaryTextShade, this._primaryTextShade
 		);
 	}
 
-	setSecondaryFontColor() {
+	setSecondaryFontShade() {
 		this._doc.setTextColor(
 			this._secondaryTextShade, this._secondaryTextShade, this._secondaryTextShade
 		);
@@ -65,22 +67,22 @@ module.exports = class MassSlidesGenerator {
 		this._doc.setFontSize(this._lyricsSize);
 	}
 
-	addIntroduction() {
+	addIntroduction(date) {
 		this.addBackground();
 		const width = this._doc.internal.pageSize.getWidth();
 		const height = this._doc.internal.pageSize.getHeight();
 
-		this.setPrimaryFontColor();
-		const title = "Messe du " + this.getNextWednesdayFrench();
+		this.setPrimaryFontShade();
+		const title = "Messe du " + getDateFrench(date);
 		this._doc.setFontSize(this._introductionTitleSize);
 		const splitTitle = this._doc.splitTextToSize(title, width - 40);
 		this._doc.text(splitTitle, width/2, height/3, { align: "center" });
 
-		this.setSecondaryFontColor();
+		this.setSecondaryFontShade();
 		const substitle = "Aumônerie de Beaulieu";
 		this._doc.setFontSize(this._introductionSubtitleSize);
 		this._doc.text(substitle, width/2, 2*height/3, { align: "center" });
-		this.setPrimaryFontColor();
+		this.setPrimaryFontShade();
 	}
 
 	addConclusion() {
@@ -198,12 +200,11 @@ module.exports = class MassSlidesGenerator {
 		this._doc.text(splitUniversalPrayerChorus, width/2, height/2, { align: "center" });
 	}
 
-	async addPsalm() {
+	addPsalm(psalmChorus) {
 		const width = this._doc.internal.pageSize.getWidth();
 		const height = this._doc.internal.pageSize.getHeight();
 		const fullSongBoxWidth = width - this._songBoxMarginLeft - this._songBoxMarginRight;
 		this._doc.setFontSize(this._singleLineSize);
-		const psalmChorus = await this.getPsalmChorus();
 		const splitPsalmChorus = this._doc.splitTextToSize(psalmChorus, fullSongBoxWidth);
 		this._doc.text(splitPsalmChorus, width/2, height/2, { align: "center" });
 	}
@@ -216,58 +217,15 @@ module.exports = class MassSlidesGenerator {
 		this.addTextWithStyle(lyricsSplit, xLeft, yTop);
 	}
 
-	getNextWednesday() {
-		const nextWednesday = new Date();
-		while (nextWednesday.getDay() !== 3)
-			nextWednesday.setDate(nextWednesday.getDate() + 1);
-		return nextWednesday;
-	}
-
-	getNextWednesdayDigits() {
-		const nextWednesday = this.getNextWednesday();
-		const year = nextWednesday.getFullYear();
-		const month = nextWednesday.getMonth() + 1;
-		const day = nextWednesday.getDate();
-
-		let str = year + "-";
-		if (month < 10) 
-			str += "0";
-		str += month + "-";
-		if (day < 10) 
-			str += "0";
-		str += day;
-		return str;
-	}
-
-	getNextWednesdayFrench() {
-		const months = [
-			"Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
-			"Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre"
-		];
-		const nextWednesday = this.getNextWednesday();
-		const year = nextWednesday.getFullYear();
-		const month = months[nextWednesday.getMonth()];
-		const day = nextWednesday.getDate();
-		return "Mercredi " + day + " " + month + " " + year;
-	}
-
-	async getPsalmChorus() {
-		const endpoint = "https://api.aelf.org/v1/messes/" + this.getNextWednesdayDigits() + "/france";
-		const { data } = await axios.get(endpoint);
-		for (let lect of data.messes[0].lectures)
-			if (lect.type == "psaume")
-				return lect.refrain_psalmique.replace(/(<[^>]+>)/g, "");
-		return null;
-	}
-
-	async generateSlides(
-		entranceSong, universalPrayerChorus, offertorySong, communionSong, recessionalSong,
-		addGloria=false
+	generateSlides(
+		entranceSong, psalmChorus, universalPrayerChorus,
+		offertorySong, communionSong, recessionalSong,
+		date, addGloria=false
 	) {
 		this._doc = new jsPDF({ orientation: "l", format: "a4" });
 		
 		// introduction
-		this.addIntroduction();
+		this.addIntroduction(date);
 		
 		if (entranceSong) {
 			// entrance
@@ -302,7 +260,7 @@ module.exports = class MassSlidesGenerator {
 
 		// psalm
 		this.addPage();
-		await this.addPsalm();
+		this.addPsalm(psalmChorus);
 
 		// empty
 		this.addPage();
