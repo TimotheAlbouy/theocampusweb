@@ -11,7 +11,7 @@ exports.getMass = (req, res) => {
 	const db = req.app.get("db");
 	const entranceSongTitles = db.prepare("SELECT title FROM Song, EntranceSong WHERE Song.id = EntranceSong.id")
 		.all().map(song => song.title);
-	const universalPrayerChoruses = db.prepare("SELECT chorus FROM UniversalPrayer")
+	const universalPrayerChoruses = db.prepare("SELECT chorus FROM UniversalPrayer ORDER BY chorus")
 		.all().map(universalPrayer => universalPrayer.chorus);
 	const offertorySongTitles = db.prepare("SELECT title FROM Song, OffertorySong WHERE Song.id = OffertorySong.id")
 		.all().map(song => song.title);
