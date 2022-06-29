@@ -100,6 +100,12 @@ exports.postNewSong = (req, res) => {
 	if (!req.body.title || !req.body.lyrics) {
 		req.flash("flashType", "danger");
 		req.flash("flashMessage", "Informations manquantes.");
+		req.flash("flashTitle", req.body.title);
+		req.flash("flashLyrics", req.body.lyrics);
+		req.flash("flashIsEntrance", req.body.isEntranceSong);
+		req.flash("flashIsOffertory", req.body.isOffertorySong);
+		req.flash("flashIsCommunion", req.body.isCommunionSong);
+		req.flash("flashIsRecessional", req.body.isRecessionalSong);
 		res.redirect("/mass/songs/new");
 		return;
 	}
