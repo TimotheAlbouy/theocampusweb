@@ -45,6 +45,8 @@
 				value="<%= nextWednesday.toISOString().split('T')[0] %>"
 			/>
 
+			<br />
+
 			<div class="form-check">
 				<input id="addGloria" type="checkbox" class="form-check-input" />
 				<label for="addGloria" class="form-check-label">
@@ -66,8 +68,14 @@
 			<br />
 
 			<div class="card">
-				<div
-					class="card-body text-secondary" id="whatsappMessage" style="white-space: pre-wrap;"
+				<div style="display: inline-block; position: absolute; top: 10px; right: 10px;">
+					<button class="btn btn-primary disabled" id="copyBtn"
+						onclick="copyWhatsappMessage()">
+						Copier dans le presse-papier
+					</button>
+				</div>
+				<div class="card-body text-secondary"
+					id="whatsappMessage" style="white-space: pre-wrap;"
 				><span class="font-italic">Message WhatsApp avec formatage</span></div>
 			</div>
 
@@ -116,7 +124,12 @@
 					const frame = $("#slidesFrame")[0];
 					frame.src = frame.src;
 					$("#whatsappMessage").text(data);
+					$("#copyBtn").removeClass("disabled");
 				});
+			}
+
+			function copyWhatsappMessage() {
+				navigator.clipboard.writeText($("#whatsappMessage").text());
 			}
 		</script>
 	</body>
