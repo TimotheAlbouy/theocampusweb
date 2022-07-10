@@ -38,13 +38,23 @@ app.use(session(
 app.use(flash());
 app.use((req, res, next) => {
 	res.locals.username = req.session.username;
-	const flashTypeArray = req.flash("flashType");
-	const flashMessageArray = req.flash("flashMessage");
-	if (flashTypeArray) res.locals.flashType = flashTypeArray[0];
-	if (flashTypeArray) res.locals.flashMessage = flashMessageArray[0];
+	const flashVarNames = [
+		"flashType", "flashMessage",              // alerts
+		"flashTitle", "flashLyrics",              // songs
+		"flashIsEntrance", "flashIsOffertory",
+		"flashIsCommunion", "flashIsRecessional",
+		"flashChorus"                             // universal prayers
+	];
+	for (const varName of flashVarNames)
+		defineFlashVariable(varName, req, res);
 	next();
 });
 app.use(express.static(path.join(__dirname, "public")));
+
+function defineFlashVariable(varName, req, res) {
+	const arr = req.flash(varName);
+	if (arr) res.locals[varName] = arr[0];
+} 
 
 const db = new Database(path.join(__dirname, DATABASE_NAME));
 //const db = new Database(path.join(__dirname, DATABASE_NAME), { verbose: console.log });

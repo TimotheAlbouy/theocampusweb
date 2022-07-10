@@ -35,8 +35,20 @@
 				</div>
 			</div>
 
+			<%
+				let nextWednesday = new Date();
+				while (nextWednesday.getDay() !== 3)
+					nextWednesday.setDate(nextWednesday.getDate() + 1);
+			%>
+			<label for="date" class="form-label">Date de la messe</label>
+			<input type="date" id="date" class="form-control"
+				value="<%= nextWednesday.toISOString().split('T')[0] %>"
+			/>
+
+			<br />
+
 			<div class="form-check">
-				<input id="addGloria" type="checkbox"	class="form-check-input" />
+				<input id="addGloria" type="checkbox" class="form-check-input" />
 				<label for="addGloria" class="form-check-label">
 					Rajouter un Gloria
 				</label>
@@ -44,13 +56,27 @@
 
 			<br />
 			
-			<button type="button" class="btn btn-success" onclick="generateSlides()">
+			<button type="button" class="btn btn-success" onclick="generateMediums()">
 				Générer
 			</button>
 
 			<p>Diaporama enregistré :</p>
 			<div class="embed-responsive embed-responsive-16by9">
 				<iframe class="embed-responsive-item" id="slidesFrame" src="/mass/slides"></iframe>
+			</div>
+
+			<br />
+
+			<div class="card">
+				<div style="display: inline-block; position: absolute; top: 10px; right: 10px;">
+					<button class="btn btn-primary disabled" id="copyBtn"
+						onclick="copyWhatsappMessage()">
+						Copier dans le presse-papier
+					</button>
+				</div>
+				<div class="card-body text-secondary"
+					id="whatsappMessage" style="white-space: pre-wrap;"
+				><span class="font-italic">Message WhatsApp avec formatage</span></div>
 			</div>
 
 			<br />
@@ -85,18 +111,25 @@
 				).on("focus", function() { $(this).autocomplete("search", ""); });
 			});
 
-			function generateSlides() {
+			function generateMediums() {
 				$.post("/mass", {
 					entranceSongTitle: $("#entranceSongTitle").val(),
 					universalPrayerChorus: $("#universalPrayerChorus").val(),
 					offertorySongTitle: $("#offertorySongTitle").val(),
 					communionSongTitle: $("#communionSongTitle").val(),
 					recessionalSongTitle: $("#recessionalSongTitle").val(),
+					date: $("#date").val(),
 					addGloria: $("#addGloria").prop("checked")
-				}, () => {
+				}, data => {
 					const frame = $("#slidesFrame")[0];
 					frame.src = frame.src;
+					$("#whatsappMessage").text(data);
+					$("#copyBtn").removeClass("disabled");
 				});
+			}
+
+			function copyWhatsappMessage() {
+				navigator.clipboard.writeText($("#whatsappMessage").text());
 			}
 		</script>
 	</body>

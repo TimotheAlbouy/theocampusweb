@@ -20,32 +20,52 @@
 			<form method="POST">
 				<div class="form-group">
 					<label for="title">Titre</label>
-					<input id="title" name="title" class="form-control" />
+					<input id="title" name="title" class="form-control"
+						value="<% if (flashTitle) { %><%= flashTitle %><% } %>"
+					/>
 				</div>
 
 				<div class="form-group">
 					<label for="lyrics">Paroles</label>
-					<textarea id="lyrics" name="lyrics" class="form-control" rows="20"></textarea>
+					<textarea id="lyrics"
+						name="lyrics" class="form-control" rows="20"
+					><% if (flashLyrics) { %><%= flashLyrics %><% } %></textarea>
 				</div>
 
 				<div class="form-check">
-					<input id="isEntranceSong" name="isEntranceSong" type="checkbox" class="form-check-input" />
-					<label for="isEntranceSong" class="form-check-label">Est un chant d'entrée</label>
+					<input id="isEntranceSong" name="isEntranceSong" type="checkbox"
+						class="form-check-input" <% if (flashIsEntrance) { %>checked<% } %>
+					/>
+					<label for="isEntranceSong" class="form-check-label">
+						Est un chant d'entrée
+					</label>
 				</div>
 
 				<div class="form-check">
-					<input id="isOffertorySong" name="isOffertorySong" type="checkbox" class="form-check-input" />
-					<label for="isOffertorySong" class="form-check-label">Est un chant d'offertoire</label>
+					<input id="isOffertorySong" name="isOffertorySong" type="checkbox"
+						class="form-check-input" <% if (flashIsOffertory) { %>checked<% } %>
+					/>
+					<label for="isOffertorySong" class="form-check-label">
+						Est un chant d'offertoire
+					</label>
 				</div>
 
 				<div class="form-check">
-					<input id="isCommunionSong" name="isCommunionSong" type="checkbox" class="form-check-input" />
-					<label for="isCommunionSong" class="form-check-label">Est un chant de communion</label>
+					<input id="isCommunionSong" name="isCommunionSong" type="checkbox"
+						class="form-check-input" <% if (flashIsCommunion) { %>checked<% } %>
+					/>
+					<label for="isCommunionSong" class="form-check-label">
+						Est un chant de communion
+					</label>
 				</div>
 
 				<div class="form-check">
-					<input id="isRecessionalSong" name="isRecessionalSong" type="checkbox" class="form-check-input" />
-					<label for="isRecessionalSong" class="form-check-label">Est un chant d'envoi</label>
+					<input id="isRecessionalSong" name="isRecessionalSong" type="checkbox"
+						class="form-check-input" <% if (flashIsRecessional) { %>checked<% } %>
+					/>
+					<label for="isRecessionalSong" class="form-check-label">
+						Est un chant d'envoi
+					</label>
 				</div>
 
 				<br />
@@ -53,6 +73,8 @@
 				<button class="btn btn-success" type="submit">
 					Enregistrer
 				</button>
+
+				<br /><br />
 			</form>
 		</div>
 	</body>

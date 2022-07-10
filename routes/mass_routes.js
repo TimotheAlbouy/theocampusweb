@@ -1,7 +1,9 @@
 const path = require("path");
 
 const MassSlidesGenerator = require("../util/mass_slides_generator.js");
+const generateWhatsappMessage = require("../util/mass_message_generator.js");
 const { NO_SONG } = require("../util/constants.js");
+const { getPsalmChorus } = require("../util/util.js");
 
 exports.getSlides = (req, res) => {
 	res.sendFile("slides.pdf", { root: path.join(__dirname, "..") });
@@ -11,7 +13,7 @@ exports.getMass = (req, res) => {
 	const db = req.app.get("db");
 	const entranceSongTitles = db.prepare("SELECT title FROM Song, EntranceSong WHERE Song.id = EntranceSong.id")
 		.all().map(song => song.title);
-	const universalPrayerChoruses = db.prepare("SELECT chorus FROM UniversalPrayer")
+	const universalPrayerChoruses = db.prepare("SELECT chorus FROM UniversalPrayer ORDER BY chorus")
 		.all().map(universalPrayer => universalPrayer.chorus);
 	const offertorySongTitles = db.prepare("SELECT title FROM Song, OffertorySong WHERE Song.id = OffertorySong.id")
 		.all().map(song => song.title);
@@ -21,7 +23,7 @@ exports.getMass = (req, res) => {
 		.all().map(song => song.title);
 	
 	res.render("pages/mass/mass.ejs", {
-		title: "Générateur de diaporama de messe",
+		title: "Générateur de support de messe",
 		entranceSongTitles: entranceSongTitles,
 		universalPrayerChoruses: universalPrayerChoruses,
 		offertorySongTitles: offertorySongTitles,
@@ -38,7 +40,8 @@ exports.postMass = async (req, res) => {
 		entranceSongTitle,
 		offertorySongTitle,
 		communionSongTitle,
-		recessionalSongTitle
+		recessionalSongTitle,
+		date
 	} = req.body;
 	let { universalPrayerChorus } = req.body;
 
@@ -68,13 +71,26 @@ exports.postMass = async (req, res) => {
 	if (req.body.addGloria === "true")
 		addGloria = true;
 	
+	let dateObj = new Date(date);
+	if (dateObj.toString() === "Invalid Date")
+		dateObj = new Date();
+	
+	const psalmChorus = await getPsalmChorus(dateObj);
+	
 	const generator = new MassSlidesGenerator();
 	const slides = await generator.generateSlides(
-		entranceSong, universalPrayerChorus, offertorySong, communionSong, recessionalSong,
-		addGloria
+		entranceSong, psalmChorus, universalPrayerChorus,
+		offertorySong, communionSong, recessionalSong,
+		dateObj, addGloria
 	);
 	slides.save("slides.pdf");
 
-  res.status(201);
-  res.send(""); 
+	const whatsappMessage = generateWhatsappMessage(
+		entranceSong, psalmChorus, universalPrayerChorus,
+		offertorySong, communionSong, recessionalSong,
+		dateObj
+	);
+
+	res.status(201);
+	res.send(whatsappMessage); 
 };
