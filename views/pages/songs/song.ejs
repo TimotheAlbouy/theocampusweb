@@ -29,7 +29,9 @@
 					<div class="form-group">
 						<label for="lyrics">Paroles</label>
 						<textarea id="lyrics" name="lyrics"
-							class="form-control" rows="20"><%= song.lyrics %></textarea>
+							class="form-control" rows="20"
+							placeholder="Le refrain doit commencer par un &quot;R. &quot; (l'espace après le point est important).&#10;&#10;Les couplets ne doivent pas contenir de numéros (comme &quot;1.&quot;, &quot;2.&quot;, ...), ceux-ci sont insérés automatiquement lors de la génération.&#10;&#10;Les paragraphes doivent être séparés par une ligne vide (sans espace)."
+						><%= song.lyrics %></textarea>
 					</div>
 
 					<div class="form-check">
